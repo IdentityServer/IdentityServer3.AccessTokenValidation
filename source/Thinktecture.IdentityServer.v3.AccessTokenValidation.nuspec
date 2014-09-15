@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Thinktecture.IdentityServer.v3.AccessTokenValidation</id>
+    <version>0.0.0</version>
+    <title>Thinktecture IdentityServer v3 Access Token Validation</title>
+    <authors>Brock Allen, Dominick Baier</authors>
+    <owners>Brock Allen, Dominick Baier</owners>
+    <projectUrl>https://github.com/thinktecture/Thinktecture.IdentityServer.v3.AccessTokenValidation</projectUrl>
+    <iconUrl>http://www.thinktecture.com/images/favicon.ico</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Token validation middleware for JWT and self-contained tokens from Thinktecture IdentityServer v3.</description>
+    <copyright>Copyright 2014</copyright>
+    <tags>Thinktecture IdentityServer OpenIDConnect OAuth2 owin</tags>
+    <dependencies>
+      <dependency id="Owin" version="1.0"/>
+      <dependency id="Microsoft.Owin.Security.Jwt" version="3.0.0" />
+      <dependency id="Microsoft.AspNet.WebApi.Client" version="5.2.2" />
+      <dependency id="Microsoft.IdentityModel.Protocol.Extensions" version="1.0.0" />
+    </dependencies>
+  </metadata>
+</package>
