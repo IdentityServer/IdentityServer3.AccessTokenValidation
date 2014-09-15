@@ -11,7 +11,7 @@ These are standard JSON Web Tokens and you don't really need any special middlew
 ```csharp
 app.UseIdentitiyServerJwt(new JwtTokenValidationOptions
     {
-        Authority = "http://localhost:3333/core"
+        Authority = "https://identity.thinktecture.com"
     });
 ```
 
@@ -21,6 +21,6 @@ Reference tokens don't contain any data, they are pointers to data that is store
 ```csharp
 app.UseIdentitiyServerReferenceToken(new ReferenceTokenValidationOptions
     {
-        Authority = "http://localhost:3333/core"
+        Authority = "https://identity.thinktecture.com"
     });
 ```
