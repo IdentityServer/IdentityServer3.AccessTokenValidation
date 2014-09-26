@@ -77,6 +77,9 @@
     <Compile Include="Jwt\SelfContainedTokenValidationOptions.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\default.licenseheader">
+      <Link>default.licenseheader</Link>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
