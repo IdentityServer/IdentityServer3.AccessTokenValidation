@@ -24,7 +24,7 @@ namespace Owin
 {
     public static class SelfContainedTokenValidationExtensions
     {
-        public static IAppBuilder UseIdentitiyServerJwt(this IAppBuilder app, JwtTokenValidationOptions options)
+        public static IAppBuilder UseIdentityServerJwt(this IAppBuilder app, JwtTokenValidationOptions options)
         {
             if (!string.IsNullOrWhiteSpace(options.Authority))
             {
