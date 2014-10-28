@@ -19,7 +19,7 @@ namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
 {
     public class ReferenceTokenValidationOptions : AuthenticationOptions
     {
-        public ReferenceTokenValidationOptions() : base("IdSrvReferenceToken")
+        public ReferenceTokenValidationOptions() : base("Bearer")
         { }
         
         public string Authority { get; set; }

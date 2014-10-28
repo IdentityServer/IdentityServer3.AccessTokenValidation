@@ -21,7 +21,7 @@ namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
     public class JwtTokenValidationOptions : AuthenticationOptions
     {
         public JwtTokenValidationOptions()
-            : base("IdentityServerJwt")
+            : base("Bearer")
         { }
 
         // either provide base url for discovery
