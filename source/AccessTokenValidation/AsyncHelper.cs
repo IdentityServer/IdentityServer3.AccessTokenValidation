@@ -13,22 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Microsoft.Owin.Security;
-using System.Security.Cryptography.X509Certificates;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
 {
-    public class JwtTokenValidationOptions : AuthenticationOptions
+    internal static class AsyncHelper
     {
-        public JwtTokenValidationOptions()
-            : base("Bearer")
-        { }
+        private static readonly TaskFactory _myTaskFactory = new TaskFactory(CancellationToken.None, TaskCreationOptions.None, TaskContinuationOptions.None, TaskScheduler.Default);
 
-        // either provide base url for discovery
-        public string Authority { get; set; }
+        public static void RunSync(Func<Task> func)
+        {
+            _myTaskFactory.StartNew(func).Unwrap().GetAwaiter().GetResult();
+        }
 
-        // or set issuer and cert manually
-        public string IssuerName { get; set; }
-        public X509Certificate2 SigningCertificate { get; set; }
+        public static TResult RunSync<TResult>(Func<Task<TResult>> func)
+        {
+            return _myTaskFactory.StartNew(func).Unwrap().GetAwaiter().GetResult();
+        }
     }
 }

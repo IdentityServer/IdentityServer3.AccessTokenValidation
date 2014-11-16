@@ -13,21 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Microsoft.Owin.Security.OAuth;
-using Thinktecture.IdentityServer.v3.AccessTokenValidation;
-
-namespace Owin
+namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
 {
-    public static class ReferenceTokenValidationExtensions
+    public enum ValidationType
     {
-        public static IAppBuilder UseIdentityServerReferenceToken(this IAppBuilder app, ReferenceTokenValidationOptions options)
-        {
-            app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions
-                {
-                    AccessTokenProvider = new ReferenceTokenProvider(options.Authority, options.AuthenticationType)
-                });
-
-            return app;
-        }
+        Local,
+        ValidationEndpoint,
     }
 }

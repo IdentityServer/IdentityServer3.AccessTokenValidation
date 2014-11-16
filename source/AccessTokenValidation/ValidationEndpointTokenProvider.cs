@@ -24,14 +24,16 @@ using System.Threading.Tasks;
 
 namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
 {
-    public class ReferenceTokenProvider : AuthenticationTokenProvider
+    public class ValidationEndpointTokenProvider : AuthenticationTokenProvider
     {
-        private HttpClient _client;
-        private string _tokenValidationEndpoint;
-        private string _authenticationType;
+        private readonly HttpClient _client;
+        private readonly string _tokenValidationEndpoint;
+        private readonly IdentityServerBearerTokenAuthenticationOptions _options;
 
-        public ReferenceTokenProvider(string authority, string authenticationType)
+        public ValidationEndpointTokenProvider(IdentityServerBearerTokenAuthenticationOptions options)
         {
+            var authority = options.Authority;
+
             if (!authority.EndsWith("/"))
             {
                 authority += "/";
@@ -41,13 +43,13 @@ namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
 
             _tokenValidationEndpoint = authority + "?token={0}";
             _client = new HttpClient();
-            _authenticationType = authenticationType;
+            _options = options;
         }
 
         public override async Task ReceiveAsync(AuthenticationTokenReceiveContext context)
         {
             var url = string.Format(_tokenValidationEndpoint, context.Token);
-            
+
             var response = await _client.GetAsync(url);
             if (response.StatusCode != HttpStatusCode.OK)
             {
@@ -76,7 +78,7 @@ namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
                 }
             }
 
-            context.SetTicket(new AuthenticationTicket(new ClaimsIdentity(claims, _authenticationType), new AuthenticationProperties()));
+            context.SetTicket(new AuthenticationTicket(new ClaimsIdentity(claims, _options.AuthenticationType), new AuthenticationProperties()));
         }
     }
 }
