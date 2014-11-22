@@ -30,11 +30,11 @@ namespace Owin
                 throw new ArgumentNullException("options");
             }
 
-            if (options.ValidationType == ValidationType.Local)
+            if (options.ValidationMode == ValidationMode.Local)
             {
                 app.UseLocalValidation(options);
             }
-            else if (options.ValidationType == ValidationType.ValidationEndpoint)
+            else if (options.ValidationMode == ValidationMode.ValidationEndpoint)
             {
                 app.UseValidationEndpoint(options);
             }
@@ -92,110 +92,18 @@ namespace Owin
 
         internal static void UseValidationEndpoint(this IAppBuilder app, IdentityServerBearerTokenAuthenticationOptions options)
         {
+            if (options.CacheClaims)
+            {
+                if (options.ClaimsCache == null)
+                {
+                    options.ClaimsCache = new InMemoryClaimsCache(options);
+                }
+            }
+
             app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions
             {
                 AccessTokenProvider = new ValidationEndpointTokenProvider(options)
             });
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //internal static void UseLocal(this IAppBuilder app, IdentityServerBearerTokenAuthenticationOptions options)
-        //{
-
-
-
-
-
-        //    //if (!string.IsNullOrWhiteSpace(options.Authority))
-        //    //{
-        //    //    return app.UseJwtDiscovery(options);
-        //    //}
-        //    //else
-        //    //{
-        //    //    return app.ConfigureJwtMiddleware(options.IdentityServerName, options.SigningCertificates, options.AuthenticationType);
-        //    //}
-        //}
-
-
-
-
-
-
-
-
-
-        //private static IAppBuilder UseJwtDiscovery(this IAppBuilder app, IdentityServerBearerTokenAuthenticationOptions options)
-        //{
-        //    var authority = options.Authority;
-
-        //    if (!authority.EndsWith("/"))
-        //    {
-        //        authority += "/";
-        //    }
-
-        //    authority += ".well-known/openid-configuration";
-        //    var configuration = new ConfigurationManager<OpenIdConnectConfiguration>(authority);
-
-        //    var result = configuration.GetConfigurationAsync().Result;
-        //    var certs = from key in result.JsonWebKeySet.Keys
-        //                select new X509Certificate2(Convert.FromBase64String(key.X5c.First()));
-
-        //    return app.ConfigureJwtMiddleware(result.Issuer, certs, options.AuthenticationType);
-        //}
-
-        //internal static IAppBuilder ConfigureJwtMiddleware(this IAppBuilder app, string issuerName, IEnumerable<X509Certificate2> signingCertificates, string authenticationType)
-        //{
-        //    if (string.IsNullOrWhiteSpace(issuerName)) throw new ArgumentNullException("issuerName");
-        //    if (!signingCertificates.Any()) throw new ArgumentNullException("signingCertificate");
-
-        //    var audience = issuerName;
-
-        //    if (!audience.EndsWith("/"))
-        //    {
-        //        audience += "/";
-        //    }
-
-        //    audience += "resources";
-
-        //    var providers = new List<X509CertificateSecurityTokenProvider>();
-        //    foreach (var cert in signingCertificates)
-        //    {
-        //        providers.Add(new X509CertificateSecurityTokenProvider(issuerName, cert));
-        //    }
-
-        //    app.UseJwtBearerAuthentication(new Microsoft.Owin.Security.Jwt.JwtBearerAuthenticationOptions
-        //    {
-        //        AuthenticationType = authenticationType,
-
-        //        AllowedAudiences = new[] { audience },
-        //        IssuerSecurityTokenProviders = providers
-        //    });
-
-        //    return app;
-        //}
     }
 }

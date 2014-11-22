@@ -12,6 +12,11 @@
     <description>Token validation middleware for JWT and self-contained tokens from Thinktecture IdentityServer v3.</description>
     <copyright>Copyright 2014</copyright>
     <tags>Thinktecture IdentityServer OpenIDConnect OAuth2 owin</tags>
+    
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.Runtime.Caching"  />
+    </frameworkAssemblies>
+
     <dependencies>
       <dependency id="Owin" version="1.0"/>
       <dependency id="Microsoft.Owin.Security.Jwt" version="3.0.0" />

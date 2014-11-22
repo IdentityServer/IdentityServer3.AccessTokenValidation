@@ -27,17 +27,21 @@ namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
     {
         public IdentityServerBearerTokenAuthenticationOptions() : base("Bearer")
         {
-            ValidationType = ValidationType.ValidationEndpoint;
+            ValidationMode = ValidationMode.ValidationEndpoint;
             RequiredScopes = Enumerable.Empty<string>();
+
+            ClaimsCacheDuration = TimeSpan.FromMinutes(5);
         }
 
-        // common for JWT and reference token
-        public ValidationType ValidationType { get; set; }
+        // common for local and validation endpoint
+        public ValidationMode ValidationMode { get; set; }
         public string Authority { get; set; }
         public IEnumerable<string> RequiredScopes { get; set; }
 
-        // reference token specific
-        public TimeSpan ReferenceTokenCacheDuration { get; set; }
+        // validation endoint specific
+        public bool CacheClaims { get; set; }
+        public IClaimsCache ClaimsCache { get; set; }
+        public TimeSpan ClaimsCacheDuration { get; set; }
 
         /// <summary>
         /// Gets or sets the authentication provider.
