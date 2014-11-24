@@ -74,16 +74,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppBuilderExtensions.cs" />
     <Compile Include="AsyncHelper.cs" />
     <Compile Include="CachingDiscoveryTokenProvider.cs" />
+    <Compile Include="IClaimsCache.cs" />
+    <Compile Include="IdentityServerAccessTokenValidationAppBuilderExtensions.cs" />
     <Compile Include="IdentityServerBearerTokensAuthenticationOptions.cs" />
     <Compile Include="InMemoryClaimsCache.cs" />
-    <Compile Include="IClaimsCache.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScopeRequirementMiddleware.cs" />
     <Compile Include="ValidationEndpointTokenProvider.cs" />
-    <Compile Include="ValidationType.cs" />
+    <Compile Include="ValidationMode.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\default.licenseheader">

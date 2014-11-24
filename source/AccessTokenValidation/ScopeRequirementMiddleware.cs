@@ -53,7 +53,30 @@ namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
             context.Response.StatusCode = 403;
             context.Response.Headers.Add("WWW-Authenticate", new[] { "Bearer error=\"insufficient_scope\"" });
 
+            EmitCorsResponseHeaders(env);
+
             return;
+        }
+
+        private void EmitCorsResponseHeaders(IDictionary<string, object> env)
+        {
+            var ctx = new OwinContext(env);
+            string[] values;
+
+            if (ctx.Request.Headers.TryGetValue("Origin", out values))
+            {
+                ctx.Response.Headers.Add("Access-Control-Allow-Origin", values);
+            }
+
+            if (ctx.Request.Headers.TryGetValue("Access-Control-Request-Method", out values))
+            {
+                ctx.Response.Headers.Add("Access-Control-Allow-Method", values);
+            }
+
+            if (ctx.Request.Headers.TryGetValue("Access-Control-Request-Headers", out values))
+            {
+                ctx.Response.Headers.Add("Access-Control-Allow-Headers", values);
+            }
         }
 
         private bool ScopesFound(OwinContext context)

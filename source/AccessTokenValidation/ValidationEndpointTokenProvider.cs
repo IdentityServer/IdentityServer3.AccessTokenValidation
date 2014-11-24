@@ -48,7 +48,7 @@ namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
 
         public override async Task ReceiveAsync(AuthenticationTokenReceiveContext context)
         {
-            if (_options.CacheClaims)
+            if (_options.EnableClaimsCache)
             {
                 var result = await _options.ClaimsCache.GetAsync(context.Token);
                 if (result != null)
@@ -88,12 +88,18 @@ namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
                 }
             }
 
-            if (_options.CacheClaims)
+            if (_options.EnableClaimsCache)
             {
                 await _options.ClaimsCache.AddAsync(context.Token, claims);
             }
 
-            context.SetTicket(new AuthenticationTicket(new ClaimsIdentity(claims, _options.AuthenticationType), new AuthenticationProperties()));
+            var id = new ClaimsIdentity(
+                claims,
+                _options.AuthenticationType,
+                _options.NameClaimType,
+                _options.RoleClaimType);
+
+            context.SetTicket(new AuthenticationTicket(id, new AuthenticationProperties()));
         }
     }
 }
