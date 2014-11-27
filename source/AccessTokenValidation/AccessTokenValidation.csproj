@@ -76,7 +76,9 @@
   <ItemGroup>
     <Compile Include="AsyncHelper.cs" />
     <Compile Include="CachingDiscoveryTokenProvider.cs" />
+    <Compile Include="Clock.cs" />
     <Compile Include="IClaimsCache.cs" />
+    <Compile Include="IClock.cs" />
     <Compile Include="IdentityServerAccessTokenValidationAppBuilderExtensions.cs" />
     <Compile Include="IdentityServerBearerTokensAuthenticationOptions.cs" />
     <Compile Include="InMemoryClaimsCache.cs" />

@@ -25,16 +25,25 @@ namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
     {
         private readonly IdentityServerBearerTokenAuthenticationOptions _options;
         private readonly MemoryCache _cache;
+	    private readonly IClock _clock;
 
-        public InMemoryClaimsCache(IdentityServerBearerTokenAuthenticationOptions options)
-        {
-            _options = options;
-            _cache = new MemoryCache("thinktecture.validationCache");
-        }
+	    public InMemoryClaimsCache(IdentityServerBearerTokenAuthenticationOptions options) : this(options, new Clock())
+	    {
+	    }
 
-        public Task AddAsync(string token, IEnumerable<Claim> claims)
+	    public InMemoryClaimsCache(IdentityServerBearerTokenAuthenticationOptions options, IClock clock) 
+		{
+		    if (clock == null) { throw new ArgumentNullException("clock"); }
+		    if (options == null) { throw new ArgumentNullException("options"); }
+
+			_options = options;
+		    _cache = new MemoryCache("thinktecture.validationCache");
+		    _clock = clock;
+	    }
+
+	    public Task AddAsync(string token, IEnumerable<Claim> claims)
         {
-            _cache.Add(token, claims, DateTimeOffset.UtcNow.Add(_options.ClaimsCacheDuration));
+            _cache.Add(token, claims, _clock.UtcNow.Add(_options.ClaimsCacheDuration));
 
             return Task.FromResult<object>(null);
         }

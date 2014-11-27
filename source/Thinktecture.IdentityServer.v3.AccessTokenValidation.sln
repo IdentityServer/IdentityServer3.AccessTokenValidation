@@ -10,6 +10,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{3B5156
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccessTokenValidation.Tests", "AccessTokenValidation.Tests\AccessTokenValidation.Tests.csproj", "{0243A9FA-E484-43AD-A86C-F399ED79CCF3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +22,10 @@ Global
 		{DF867B5D-3A9E-443A-B95E-D8F11E2A88A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF867B5D-3A9E-443A-B95E-D8F11E2A88A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF867B5D-3A9E-443A-B95E-D8F11E2A88A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0243A9FA-E484-43AD-A86C-F399ED79CCF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0243A9FA-E484-43AD-A86C-F399ED79CCF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0243A9FA-E484-43AD-A86C-F399ED79CCF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0243A9FA-E484-43AD-A86C-F399ED79CCF3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
