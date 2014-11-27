@@ -15,7 +15,6 @@
  */
 using System;
 using System.Collections.Generic;
-using System.Runtime.Caching;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -24,20 +23,21 @@ namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
     public class InMemoryClaimsCache : IClaimsCache
     {
         private readonly IdentityServerBearerTokenAuthenticationOptions _options;
-        private readonly MemoryCache _cache;
+        private readonly ICache _cache;
 	    private readonly IClock _clock;
 
-	    public InMemoryClaimsCache(IdentityServerBearerTokenAuthenticationOptions options) : this(options, new Clock())
+	    public InMemoryClaimsCache(IdentityServerBearerTokenAuthenticationOptions options) : this(options, new Clock(), new Cache())
 	    {
 	    }
 
-	    public InMemoryClaimsCache(IdentityServerBearerTokenAuthenticationOptions options, IClock clock) 
+	    public InMemoryClaimsCache(IdentityServerBearerTokenAuthenticationOptions options, IClock clock, ICache cache) 
 		{
 		    if (clock == null) { throw new ArgumentNullException("clock"); }
 		    if (options == null) { throw new ArgumentNullException("options"); }
+		    if (cache == null) { throw new ArgumentNullException("cache"); }
 
 			_options = options;
-		    _cache = new MemoryCache("thinktecture.validationCache");
+		    _cache = cache;
 		    _clock = clock;
 	    }
 

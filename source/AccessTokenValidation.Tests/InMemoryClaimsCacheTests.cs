@@ -7,7 +7,7 @@ namespace AccessTokenValidation.Tests
 	public class InMemoryClaimsCacheTests
 	{
 		[Fact]
-        public void InvokingConstructor_WithoutSpecifyingIClock_ShouldNotError() 
+        public void InvokingConstructor_SpecifyingOnlyOptions_ShouldNotError() 
 		{
 			var options = new IdentityServerBearerTokenAuthenticationOptions();			
 
@@ -19,7 +19,8 @@ namespace AccessTokenValidation.Tests
 		{
 			var options = new IdentityServerBearerTokenAuthenticationOptions();			
 
-			Assert.Throws<ArgumentNullException>(() => new InMemoryClaimsCache(options, null));
+			Assert.Throws<ArgumentNullException>(() => new InMemoryClaimsCache(options, null, new Cache()));
 		}
+
 	}
 }
