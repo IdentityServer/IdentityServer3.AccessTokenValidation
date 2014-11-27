@@ -15,8 +15,10 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Thinktecture.IdentityModel.Extensions;
 
 namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
 {
@@ -41,9 +43,21 @@ namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
 		    _clock = clock;
 	    }
 
-	    public Task AddAsync(string token, IEnumerable<Claim> claims)
-        {
-            _cache.Add(token, claims, _clock.UtcNow.Add(_options.ClaimsCacheDuration));
+	    public Task AddAsync(string token, IEnumerable<Claim> claims) {
+		    var expiryClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.Expiration);
+		    var cacheExpirySetting = _clock.UtcNow.Add(_options.ClaimsCacheDuration);
+		    if (expiryClaim != null) {
+			    long epoch;
+			    if (long.TryParse(expiryClaim.Value, out epoch)) {
+				    var tokenExpiresAt = epoch.ToDateTimeOffsetFromEpoch();
+				    if (tokenExpiresAt < cacheExpirySetting) {
+			            _cache.Add(token, claims, tokenExpiresAt);
+			            return Task.FromResult<object>(null);
+				    }
+			    }
+		    }
+			
+            _cache.Add(token, claims, cacheExpirySetting);
 
             return Task.FromResult<object>(null);
         }
