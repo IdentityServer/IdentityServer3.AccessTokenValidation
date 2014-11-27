@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using Moq;
 using Thinktecture.IdentityServer.v3.AccessTokenValidation;
@@ -9,10 +10,21 @@ namespace AccessTokenValidation.Tests
 	public class InMemoryClaimsCacheTests
 	{
         const string Category = "InMemoryClaimsCache";
+		protected double ExpiryClaimSaysTokenExpiresInMinutes;
+		protected double CacheEvictsTokensAfterMinutes;
+		IdentityServerBearerTokenAuthenticationOptions _options;
+		ICache _cache;
+		IClock _clock;
+		protected IEnumerable<Claim> Claims;
+		string token = "foo";
+		protected DateTimeOffset ExpectedCacheExpiry;
+		protected DateTimeOffset ExpiryClaimSaysTokenExpiresAt;
+		protected DateTimeOffset CacheExpiryEvictsTokenAt;
+		protected InMemoryClaimsCache Sut;
 
 		[Fact]
         [Trait("Category", Category)]
-        public void InvokingConstructor_SpecifyingOnlyOptions_ShouldNotError() 
+        public void InvokingConstructor_WithOptionsOnly_ShouldNotError() 
 		{
 			var options = new IdentityServerBearerTokenAuthenticationOptions();			
 
@@ -31,63 +43,59 @@ namespace AccessTokenValidation.Tests
 		[Fact]
         [Trait("Category", Category)]
         public void WhenTokenExpiryClaimExpiresBeforeClaimsCacheDuration_CacheExpiry_ShouldUseTokenExpiryClaim() {
-			var now = DateTime.Now;
-			var cache = Mock.Of<ICache>();
-			var clock = Mock.Of<IClock>(c => c.UtcNow == now);
-			var token = "foo";
-
-			// test-specific
-			// token expires in 1 min, cache expiry is 5 min
-			var expiryClaimValue = clock.UtcNow.AddMinutes(1).ToEpochTime();
-			var options = new IdentityServerBearerTokenAuthenticationOptions
+			ExpiryClaimSaysTokenExpiresInMinutes = 1;
+			CacheEvictsTokensAfterMinutes = 5;
+			Arrange(() =>
 				{
-					ClaimsCacheDuration = TimeSpan.FromMinutes(5)
-				};
-
-			var claims = new[] {new Claim("bar","baz"), new Claim(ClaimTypes.Expiration,expiryClaimValue.ToString()) };
-			var sut = new InMemoryClaimsCache(options, clock, cache);
-			var expectedCacheExpiry = expiryClaimValue.ToDateTimeOffsetFromEpoch();
-			DebugToConsole(now, expiryClaimValue, options, expectedCacheExpiry);
+					// mimic the DateTimeOffset rounding that happens via serialisation/deserialisation in the actual implementation
+					ExpectedCacheExpiry = ExpiryClaimSaysTokenExpiresAt.ToEpochTime().ToDateTimeOffsetFromEpoch(); 
+				});
 
 			// act
-			sut.AddAsync(token, claims);
+			Sut.AddAsync(token, Claims);
 
-			Mock.Get(cache).Verify(c => 
-				c.Add(It.IsAny<string>(), It.IsAny<object>(), It.Is<DateTimeOffset>(d => d == expectedCacheExpiry)));
+			Mock.Get(_cache).Verify(c => 
+				c.Add(It.IsAny<string>(), It.IsAny<object>(), It.Is<DateTimeOffset>(d => d == ExpectedCacheExpiry)));
 		}
 
 		[Fact]
         [Trait("Category", Category)]
         public void WhenTokenExpiryClaimExpiresAfterClaimsCacheDuration_CacheExpiry_ShouldUseClaimsCacheDuration() {
-			var now = DateTime.Now;
-			var cache = Mock.Of<ICache>();
-			var clock = Mock.Of<IClock>(c => c.UtcNow == now);
-			var token = "foo";
-
-			// test-specific
-			// token expires in 10 min, cache expiry is 5 min
-			var expiryClaimValue = clock.UtcNow.AddMinutes(10).ToEpochTime();
-			var options = new IdentityServerBearerTokenAuthenticationOptions
-				{
-					ClaimsCacheDuration = TimeSpan.FromMinutes(5)
-				};
-
-			var claims = new[] {new Claim("bar","baz"), new Claim(ClaimTypes.Expiration,expiryClaimValue.ToString()) };
-			var sut = new InMemoryClaimsCache(options, clock, cache);
-			var expectedCacheExpiry = clock.UtcNow.Add(options.ClaimsCacheDuration);
-			DebugToConsole(now, expiryClaimValue, options, expectedCacheExpiry);
+			ExpiryClaimSaysTokenExpiresInMinutes = 10;
+			CacheEvictsTokensAfterMinutes = 5;
+			Arrange(() => ExpectedCacheExpiry = CacheExpiryEvictsTokenAt);
 
 			// act
-			sut.AddAsync(token, claims);
+			Sut.AddAsync(token, Claims);
 
-			Mock.Get(cache).Verify(c => 
-				c.Add(It.IsAny<string>(), It.IsAny<object>(), It.Is<DateTimeOffset>(d => d == expectedCacheExpiry)));
+			Mock.Get(_cache).Verify(c => 
+				c.Add(It.IsAny<string>(), It.IsAny<object>(), It.Is<DateTimeOffset>(d => d == ExpectedCacheExpiry)));
 		}
 
-		static void DebugToConsole(DateTime now, long expiryClaimValue, IdentityServerBearerTokenAuthenticationOptions options, DateTimeOffset expectedCacheExpiry) {
+		void Arrange(Action specifyExpectedCacheExpiry) {
+			_cache = Mock.Of<ICache>();
+			_clock = Mock.Of<IClock>(c => c.UtcNow == DateTimeOffset.Now);
+			_options = new IdentityServerBearerTokenAuthenticationOptions
+				{
+					ClaimsCacheDuration = TimeSpan.FromMinutes(CacheEvictsTokensAfterMinutes)
+				};
+			ExpiryClaimSaysTokenExpiresAt = _clock.UtcNow.AddMinutes(ExpiryClaimSaysTokenExpiresInMinutes);
+			CacheExpiryEvictsTokenAt = _clock.UtcNow.Add(_options.ClaimsCacheDuration);
+			
+			// setup claims to include expiry claim
+			Claims = new[] {new Claim("bar","baz"), new Claim(ClaimTypes.Expiration,ExpiryClaimSaysTokenExpiresAt.ToEpochTime().ToString()) };
+
+			specifyExpectedCacheExpiry();
+
+			DebugToConsole(DateTime.Now, ExpiryClaimSaysTokenExpiresAt,  _options, CacheExpiryEvictsTokenAt, ExpectedCacheExpiry);
+			Sut = new InMemoryClaimsCache(_options, _clock, _cache);
+		}
+
+		static void DebugToConsole(DateTime now, DateTimeOffset expiryClaimSaysTokenExpiresAt, IdentityServerBearerTokenAuthenticationOptions options, DateTimeOffset cacheExpiryEvictsTokenAt, DateTimeOffset expectedCacheExpiry) {
 			Console.WriteLine("now: {0}", now);
-			Console.WriteLine("expiry claim value: {0}", expiryClaimValue.ToDateTimeOffsetFromEpoch());
+			Console.WriteLine("expiry claim says token expires at: {0}", expiryClaimSaysTokenExpiresAt);
 			Console.WriteLine("claims cache duration: {0}", options.ClaimsCacheDuration);
+			Console.WriteLine("cache expiry evicts token at: {0}", cacheExpiryEvictsTokenAt);
 			Console.WriteLine("expected cache expiry: {0}", expectedCacheExpiry);
 		}
 	}
