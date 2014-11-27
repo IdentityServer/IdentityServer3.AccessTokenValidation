@@ -18,7 +18,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Thinktecture.IdentityModel.Extensions;
 
 namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
 {

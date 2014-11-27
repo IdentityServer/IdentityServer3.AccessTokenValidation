@@ -72,14 +72,12 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Thinktecture.IdentityModel.Core">
-      <HintPath>..\packages\Thinktecture.IdentityModel.Core.1.2.0\lib\net45\Thinktecture.IdentityModel.Core.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AsyncHelper.cs" />
     <Compile Include="CachingDiscoveryTokenProvider.cs" />
     <Compile Include="Clock.cs" />
+    <Compile Include="EpochTimeExtensions.cs" />
     <Compile Include="ICache.cs" />
     <Compile Include="IClaimsCache.cs" />
     <Compile Include="IClock.cs" />

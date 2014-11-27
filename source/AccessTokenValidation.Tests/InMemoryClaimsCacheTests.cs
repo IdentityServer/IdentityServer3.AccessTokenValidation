@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Security.Claims;
 using Moq;
-using Thinktecture.IdentityModel.Extensions;
 using Thinktecture.IdentityServer.v3.AccessTokenValidation;
 using Xunit;
 
