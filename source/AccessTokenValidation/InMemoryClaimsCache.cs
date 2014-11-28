@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,8 +29,7 @@ namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
 	    private readonly IClock _clock;
 
 	    public InMemoryClaimsCache(IdentityServerBearerTokenAuthenticationOptions options) : this(options, new Clock(), new Cache())
-	    {
-	    }
+	    { }
 
 	    public InMemoryClaimsCache(IdentityServerBearerTokenAuthenticationOptions options, IClock clock, ICache cache) 
 		{
@@ -42,14 +42,19 @@ namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
 		    _clock = clock;
 	    }
 
-	    public Task AddAsync(string token, IEnumerable<Claim> claims) {
+	    public Task AddAsync(string token, IEnumerable<Claim> claims) 
+        {
 		    var expiryClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.Expiration);
 		    var cacheExpirySetting = _clock.UtcNow.Add(_options.ClaimsCacheDuration);
-		    if (expiryClaim != null) {
+		    
+            if (expiryClaim != null) {
 			    long epoch;
-			    if (long.TryParse(expiryClaim.Value, out epoch)) {
+			    if (long.TryParse(expiryClaim.Value, out epoch)) 
+                {
 				    var tokenExpiresAt = epoch.ToDateTimeOffsetFromEpoch();
-				    if (tokenExpiresAt < cacheExpirySetting) {
+				    
+                    if (tokenExpiresAt < cacheExpirySetting) 
+                    {
 			            _cache.Add(token, claims, tokenExpiresAt);
 			            return Task.FromResult<object>(null);
 				    }

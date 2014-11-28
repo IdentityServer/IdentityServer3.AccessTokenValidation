@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using Microsoft.Owin.Security.Jwt;
 using Microsoft.Owin.Security.OAuth;
 using System;
 using System.IdentityModel.Tokens;
 using System.Linq;
-using System.Security.Claims;
 using Thinktecture.IdentityServer.v3.AccessTokenValidation;
 
 namespace Owin

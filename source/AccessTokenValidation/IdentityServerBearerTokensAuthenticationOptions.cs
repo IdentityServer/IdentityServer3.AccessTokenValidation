@@ -21,7 +21,6 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens;
 using System.Linq;
 using System.Net.Http;
-using System.Security.Claims;
 
 namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
 {
