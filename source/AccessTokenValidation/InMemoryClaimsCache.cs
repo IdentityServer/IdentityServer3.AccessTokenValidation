@@ -15,7 +15,7 @@
  */
 using System;
 using System.Collections.Generic;
-using System.Runtime.Caching;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -24,17 +24,39 @@ namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
     public class InMemoryClaimsCache : IClaimsCache
     {
         private readonly IdentityServerBearerTokenAuthenticationOptions _options;
-        private readonly MemoryCache _cache;
+        private readonly ICache _cache;
+	    private readonly IClock _clock;
 
-        public InMemoryClaimsCache(IdentityServerBearerTokenAuthenticationOptions options)
-        {
-            _options = options;
-            _cache = new MemoryCache("thinktecture.validationCache");
-        }
+	    public InMemoryClaimsCache(IdentityServerBearerTokenAuthenticationOptions options) : this(options, new Clock(), new Cache())
+	    {
+	    }
 
-        public Task AddAsync(string token, IEnumerable<Claim> claims)
-        {
-            _cache.Add(token, claims, DateTimeOffset.UtcNow.Add(_options.ClaimsCacheDuration));
+	    public InMemoryClaimsCache(IdentityServerBearerTokenAuthenticationOptions options, IClock clock, ICache cache) 
+		{
+		    if (clock == null) { throw new ArgumentNullException("clock"); }
+		    if (options == null) { throw new ArgumentNullException("options"); }
+		    if (cache == null) { throw new ArgumentNullException("cache"); }
+
+			_options = options;
+		    _cache = cache;
+		    _clock = clock;
+	    }
+
+	    public Task AddAsync(string token, IEnumerable<Claim> claims) {
+		    var expiryClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.Expiration);
+		    var cacheExpirySetting = _clock.UtcNow.Add(_options.ClaimsCacheDuration);
+		    if (expiryClaim != null) {
+			    long epoch;
+			    if (long.TryParse(expiryClaim.Value, out epoch)) {
+				    var tokenExpiresAt = epoch.ToDateTimeOffsetFromEpoch();
+				    if (tokenExpiresAt < cacheExpirySetting) {
+			            _cache.Add(token, claims, tokenExpiresAt);
+			            return Task.FromResult<object>(null);
+				    }
+			    }
+		    }
+			
+            _cache.Add(token, claims, cacheExpirySetting);
 
             return Task.FromResult<object>(null);
         }
