@@ -111,7 +111,8 @@ namespace Owin
 
             app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions
             {
-                AccessTokenProvider = new ValidationEndpointTokenProvider(options)
+                AccessTokenProvider = new ValidationEndpointTokenProvider(options),
+                Provider = options.Provider
             });
         }
     }
