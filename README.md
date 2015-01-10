@@ -1,8 +1,8 @@
 Thinktecture.IdentityServer.v3.AccessTokenValidation
 ====================================================
 
-[![Build status](https://ci.appveyor.com/api/projects/status/2qk9c4dxea9g801e?svg=true)](https://ci.appveyor.com/project/leastprivilege/thinktecture-identityserver-v3-accesstokenvalidati)
-
+Dev build: [![Build status](https://ci.appveyor.com/api/projects/status/2qk9c4dxea9g801e?svg=true)](https://ci.appveyor.com/project/leastprivilege/thinktecture-identityserver-v3-accesstokenvalidati)
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/thinktecture/Thinktecture.IdentityServer.v3?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 OWIN Middleware to validate access tokens from IdentityServer v3.
 
