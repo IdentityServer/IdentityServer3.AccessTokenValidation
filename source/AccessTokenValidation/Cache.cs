@@ -21,15 +21,15 @@ namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
 {
 	public class Cache : ICache
 	{
-		const string CacheRegionName = "thinktecture.validationCache";
-		readonly MemoryCache _cache = new MemoryCache(CacheRegionName);
+		const string CacheName = "thinktecture.validationCache";
+		readonly MemoryCache _cache = new MemoryCache(CacheName);
 
 		public bool Add(string key, object value, DateTimeOffset absoluteExpiration) {
-			return _cache.Add(key, value, absoluteExpiration, CacheRegionName);
+			return _cache.Add(key, value, absoluteExpiration);
 		}
 
 		public object Get(string key) {
-			return _cache.Get(key, CacheRegionName);
+			return _cache.Get(key);
 		}
 	}
 }
