@@ -16,7 +16,7 @@
 
 using System;
 
-namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
+namespace Thinktecture.IdentityServer.AccessTokenValidation
 {
 	public interface IClock
 	{

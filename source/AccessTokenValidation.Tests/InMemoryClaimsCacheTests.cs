@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using Thinktecture.IdentityModel.Extensions;
-using Thinktecture.IdentityServer.v3.AccessTokenValidation;
+using Thinktecture.IdentityServer.AccessTokenValidation;
 using Xunit;
 
 namespace AccessTokenValidation.Tests

@@ -19,7 +19,7 @@ using Microsoft.Owin.Security.OAuth;
 using System;
 using System.IdentityModel.Tokens;
 using System.Linq;
-using Thinktecture.IdentityServer.v3.AccessTokenValidation;
+using Thinktecture.IdentityServer.AccessTokenValidation;
 
 namespace Owin
 {

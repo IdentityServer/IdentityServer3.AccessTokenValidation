@@ -23,7 +23,7 @@ using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
+namespace Thinktecture.IdentityServer.AccessTokenValidation
 {
     public class ValidationEndpointTokenProvider : AuthenticationTokenProvider
     {

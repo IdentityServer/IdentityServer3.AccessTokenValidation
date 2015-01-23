@@ -3,7 +3,7 @@ properties {
 	$src_directory = "$base_directory\source"
 	$output_directory = "$base_directory\build"
 	$dist_directory = "$base_directory\distribution"
-	$sln_file = "$src_directory\Thinktecture.IdentityServer.v3.AccessTokenValidation.sln"
+	$sln_file = "$src_directory\Thinktecture.IdentityServer3.AccessTokenValidation.sln"
 	$target_config = "Release"
 	$framework_version = "v4.5"
 	$xunit_path = "$src_directory\packages\xunit.runners.1.9.2\tools\xunit.console.clr4.exe"
@@ -15,7 +15,8 @@ properties {
 	$preRelease = $null
 }
 
-task default -depends Clean, CreateNuGetPackage
+task default -depends Clean, RunTests, CreateNuGetPackage
+task appVeyor -depends Clean, CreateNuGetPackage
 
 task Clean {
 	rmdir $output_directory -ea SilentlyContinue -recurse
@@ -25,6 +26,12 @@ task Clean {
 
 task Compile -depends UpdateVersion {
 	exec { msbuild /nologo /verbosity:q $sln_file /p:Configuration=$target_config /p:TargetFrameworkVersion=v4.5 }
+}
+
+task RunTests -depends Compile {
+	$project = "AccessTokenValidation.Tests"
+	mkdir $output_directory\xunit\$project -ea SilentlyContinue
+	.$xunit_path "$output_directory\$project.dll" /html "$output_directory\xunit\$project\index.html"
 }
 
 task UpdateVersion {
@@ -74,10 +81,14 @@ task CreateNuGetPackage -depends Compile {
 	if($preRelease){
 		$packageVersion = "$packageVersion-$preRelease" 
 	}
+
+	if ($buildNumber -ne 0){
+		$packageVersion = $packageVersion + "-build" + $buildNumber.ToString().PadLeft(5,'0')
+	}
 	
 	New-Item $dist_directory\lib\net45 -Type Directory
-	copy-item $output_directory\Thinktecture.IdentityServer.v3.AccessTokenValidation.* $dist_directory\lib\net45
+	copy-item $output_directory\Thinktecture.IdentityServer3.AccessTokenValidation.* $dist_directory\lib\net45
 
-	copy-item $src_directory\Thinktecture.IdentityServer.v3.AccessTokenValidation.nuspec $dist_directory
-	exec { . $nuget_path pack $dist_directory\Thinktecture.IdentityServer.v3.AccessTokenValidation.nuspec -BasePath $dist_directory -o $dist_directory -version $packageVersion }
+	copy-item $src_directory\Thinktecture.IdentityServer3.AccessTokenValidation.nuspec $dist_directory
+	exec { . $nuget_path pack $dist_directory\Thinktecture.IdentityServer3.AccessTokenValidation.nuspec -BasePath $dist_directory -o $dist_directory -version $packageVersion }
 }

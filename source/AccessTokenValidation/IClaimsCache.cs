@@ -18,7 +18,7 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
+namespace Thinktecture.IdentityServer.AccessTokenValidation
 {
     public interface IClaimsCache
     {

@@ -22,7 +22,7 @@ using System.IdentityModel.Tokens;
 using System.Linq;
 using System.Net.Http;
 
-namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
+namespace Thinktecture.IdentityServer.AccessTokenValidation
 {
     public class IdentityServerBearerTokenAuthenticationOptions : AuthenticationOptions
     {

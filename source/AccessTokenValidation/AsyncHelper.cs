@@ -17,7 +17,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
+namespace Thinktecture.IdentityServer.AccessTokenValidation
 {
     internal static class AsyncHelper
     {

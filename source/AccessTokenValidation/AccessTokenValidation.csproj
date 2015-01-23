@@ -7,8 +7,8 @@
     <ProjectGuid>{DF867B5D-3A9E-443A-B95E-D8F11E2A88A3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Thinktecture.IdentityServer.v3.AccessTokenValidation</RootNamespace>
-    <AssemblyName>Thinktecture.IdentityServer.v3.AccessTokenValidation</AssemblyName>
+    <RootNamespace>Thinktecture.IdentityServer.AccessTokenValidation</RootNamespace>
+    <AssemblyName>Thinktecture.IdentityServer3.AccessTokenValidation</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
