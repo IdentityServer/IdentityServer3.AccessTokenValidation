@@ -1,4 +1,4 @@
-Thinktecture.IdentityServer.v3.AccessTokenValidation
+Thinktecture.IdentityServer3.AccessTokenValidation
 ====================================================
 
 Dev build: [![Build status](https://ci.appveyor.com/api/projects/status/2qk9c4dxea9g801e?svg=true)](https://ci.appveyor.com/project/leastprivilege/thinktecture-identityserver-v3-accesstokenvalidati)
