@@ -51,10 +51,10 @@ namespace Thinktecture.IdentityServer.AccessTokenValidation
         {
             if (_options.EnableClaimsCache)
             {
-                var result = await _options.ClaimsCache.GetAsync(context.Token);
-                if (result != null)
+                var cachedClaims = await _options.ClaimsCache.GetAsync(context.Token);
+                if (cachedClaims != null)
                 {
-                    context.SetTicket(new AuthenticationTicket(new ClaimsIdentity(result, _options.AuthenticationType), new AuthenticationProperties()));
+                    SetAuthenticationTicket(context, cachedClaims);
                     return;
                 }
             }
@@ -94,11 +94,16 @@ namespace Thinktecture.IdentityServer.AccessTokenValidation
                 await _options.ClaimsCache.AddAsync(context.Token, claims);
             }
 
+            SetAuthenticationTicket(context, claims);
+        }
+
+        private void SetAuthenticationTicket(AuthenticationTokenReceiveContext context, IEnumerable<Claim> claims)
+        {
             var id = new ClaimsIdentity(
-                claims,
-                _options.AuthenticationType,
-                _options.NameClaimType,
-                _options.RoleClaimType);
+                            claims,
+                            _options.AuthenticationType,
+                            _options.NameClaimType,
+                            _options.RoleClaimType);
 
             context.SetTicket(new AuthenticationTicket(id, new AuthenticationProperties()));
         }
