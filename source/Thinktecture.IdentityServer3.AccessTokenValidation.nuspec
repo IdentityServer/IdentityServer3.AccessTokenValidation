@@ -10,7 +10,7 @@
     <iconUrl>http://www.thinktecture.com/images/favicon.ico</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Access token validation middleware for JWT and reference tokens issued by IdentityServer3.</description>
-    <copyright>Copyright 2014</copyright>
+    <copyright>Copyright 2015</copyright>
     <tags>Thinktecture IdentityServer OpenID Connect OpenIDConnect OAuth2 OWIN ASP.NET Katana WebApi SSO Federation Claims Identity JWT token</tags>
     
     <frameworkAssemblies>
