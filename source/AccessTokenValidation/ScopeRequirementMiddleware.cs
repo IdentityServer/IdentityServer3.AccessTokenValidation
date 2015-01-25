@@ -55,8 +55,6 @@ namespace Thinktecture.IdentityServer.AccessTokenValidation
             context.Response.Headers.Add("WWW-Authenticate", new[] { "Bearer error=\"insufficient_scope\"" });
 
             EmitCorsResponseHeaders(env);
-
-            return;
         }
 
         private void EmitCorsResponseHeaders(IDictionary<string, object> env)
@@ -84,7 +82,7 @@ namespace Thinktecture.IdentityServer.AccessTokenValidation
         {
             var scopeClaims = context.Authentication.User.FindAll("scope");
 
-            if (scopeClaims == null || scopeClaims.Count() == 0)
+            if (scopeClaims == null || !scopeClaims.Any())
             {
                 return false;
             }

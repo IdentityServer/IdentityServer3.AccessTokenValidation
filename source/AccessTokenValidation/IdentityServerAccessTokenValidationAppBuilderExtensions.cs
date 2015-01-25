@@ -74,7 +74,7 @@ namespace Owin
                 options.BackchannelCertificateValidator,
                 options.BackchannelHttpHandler);
 
-            JwtFormat jwtFormat = null;
+            JwtFormat jwtFormat;
             if (options.TokenValidationParameters != null)
             {
                 jwtFormat = new JwtFormat(options.TokenValidationParameters, provider);
