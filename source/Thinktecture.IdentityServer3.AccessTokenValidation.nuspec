@@ -9,6 +9,7 @@
     <projectUrl>https://github.com/identityserver/Thinktecture.IdentityServer3.AccessTokenValidation</projectUrl>
     <iconUrl>http://www.thinktecture.com/images/favicon.ico</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>https://github.com/IdentityServer/Thinktecture.IdentityServer3.AccessTokenValidation/blob/master/LICENSE</licenseUrl>
     <description>Access token validation middleware for JWT and reference tokens issued by IdentityServer3.</description>
     <copyright>Copyright 2015</copyright>
     <tags>Thinktecture IdentityServer OpenID Connect OpenIDConnect OAuth2 OWIN ASP.NET Katana WebApi SSO Federation Claims Identity JWT token</tags>
