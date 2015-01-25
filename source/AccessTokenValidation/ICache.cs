@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2014 Dominick Baier, Brock Allen
+ * Copyright 2015 Dominick Baier, Brock Allen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,25 @@ using System;
 
 namespace Thinktecture.IdentityServer.AccessTokenValidation
 {
+    /// <summary>
+    /// Abstraction for a cache
+    /// </summary>
 	public interface ICache
 	{
+        /// <summary>
+        /// Adds the specified key.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="absoluteExpiration">The absolute expiration.</param>
+        /// <returns></returns>
 		bool Add(string key, object value, DateTimeOffset absoluteExpiration);
-		object Get(string key);
+
+        /// <summary>
+        /// Gets the specified key.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns></returns>
+        object Get(string key);
 	}
 }

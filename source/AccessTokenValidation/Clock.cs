@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2014 Dominick Baier, Brock Allen
+ * Copyright 2015 Dominick Baier, Brock Allen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ using System;
 
 namespace Thinktecture.IdentityServer.AccessTokenValidation
 {
-	public class Clock : IClock
+	internal class Clock : IClock
 	{
 		public DateTimeOffset UtcNow 
 		{

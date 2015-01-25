@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2014 Dominick Baier, Brock Allen
+ * Copyright 2015 Dominick Baier, Brock Allen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ using System.Threading.Tasks;
 
 namespace Thinktecture.IdentityServer.AccessTokenValidation
 {
-    public class ValidationEndpointTokenProvider : AuthenticationTokenProvider
+    internal class ValidationEndpointTokenProvider : AuthenticationTokenProvider
     {
         private readonly HttpClient _client;
         private readonly string _tokenValidationEndpoint;
@@ -49,9 +49,9 @@ namespace Thinktecture.IdentityServer.AccessTokenValidation
 
         public override async Task ReceiveAsync(AuthenticationTokenReceiveContext context)
         {
-            if (_options.EnableClaimsCache)
+            if (_options.EnableValidationResultCache)
             {
-                var cachedClaims = await _options.ClaimsCache.GetAsync(context.Token);
+                var cachedClaims = await _options.ValidationResultCache.GetAsync(context.Token);
                 if (cachedClaims != null)
                 {
                     SetAuthenticationTicket(context, cachedClaims);
@@ -89,9 +89,9 @@ namespace Thinktecture.IdentityServer.AccessTokenValidation
                 }
             }
 
-            if (_options.EnableClaimsCache)
+            if (_options.EnableValidationResultCache)
             {
-                await _options.ClaimsCache.AddAsync(context.Token, claims);
+                await _options.ValidationResultCache.AddAsync(context.Token, claims);
             }
 
             SetAuthenticationTicket(context, claims);

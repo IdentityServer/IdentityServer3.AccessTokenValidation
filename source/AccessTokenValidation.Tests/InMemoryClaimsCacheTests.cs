@@ -21,7 +21,7 @@ namespace AccessTokenValidation.Tests
 		protected DateTimeOffset ExpectedCacheExpiry;
 		protected DateTimeOffset ExpiryClaimSaysTokenExpiresAt;
 		protected DateTimeOffset CacheExpiryEvictsTokenAt;
-		protected InMemoryClaimsCache Sut;
+		protected InMemoryValidationResultCache Sut;
 
 		[Fact]
         [Trait("Category", Category)]
@@ -29,7 +29,7 @@ namespace AccessTokenValidation.Tests
 		{
 			var options = new IdentityServerBearerTokenAuthenticationOptions();			
 
-			new InMemoryClaimsCache(options);
+			new InMemoryValidationResultCache(options);
 		}
 
 		[Fact]
@@ -38,7 +38,7 @@ namespace AccessTokenValidation.Tests
 		{
 			var options = new IdentityServerBearerTokenAuthenticationOptions();			
 
-			Assert.Throws<ArgumentNullException>(() => new InMemoryClaimsCache(options, null, new Cache()));
+			Assert.Throws<ArgumentNullException>(() => new InMemoryValidationResultCache(options, null, new Cache()));
 		}
 
 		[Fact]
@@ -78,10 +78,10 @@ namespace AccessTokenValidation.Tests
 			_clock = Mock.Of<IClock>(c => c.UtcNow == DateTimeOffset.Now);
 			_options = new IdentityServerBearerTokenAuthenticationOptions
 				{
-					ClaimsCacheDuration = TimeSpan.FromMinutes(CacheEvictsTokensAfterMinutes)
+					ValidationResultCacheDuration = TimeSpan.FromMinutes(CacheEvictsTokensAfterMinutes)
 				};
 			ExpiryClaimSaysTokenExpiresAt = _clock.UtcNow.AddMinutes(ExpiryClaimSaysTokenExpiresInMinutes);
-			CacheExpiryEvictsTokenAt = _clock.UtcNow.Add(_options.ClaimsCacheDuration);
+			CacheExpiryEvictsTokenAt = _clock.UtcNow.Add(_options.ValidationResultCacheDuration);
 			
 			// setup claims to include expiry claim
 			Claims = new[] {new Claim("bar","baz"), new Claim(ClaimTypes.Expiration,ExpiryClaimSaysTokenExpiresAt.ToEpochTime().ToString()) };
@@ -89,13 +89,13 @@ namespace AccessTokenValidation.Tests
 			specifyExpectedCacheExpiry();
 
 			DebugToConsole(DateTime.Now, ExpiryClaimSaysTokenExpiresAt,  _options, CacheExpiryEvictsTokenAt, ExpectedCacheExpiry);
-			Sut = new InMemoryClaimsCache(_options, _clock, _cache);
+			Sut = new InMemoryValidationResultCache(_options, _clock, _cache);
 		}
 
 		static void DebugToConsole(DateTime now, DateTimeOffset expiryClaimSaysTokenExpiresAt, IdentityServerBearerTokenAuthenticationOptions options, DateTimeOffset cacheExpiryEvictsTokenAt, DateTimeOffset expectedCacheExpiry) {
 			Console.WriteLine("now: {0}", now);
 			Console.WriteLine("expiry claim says token expires at: {0}", expiryClaimSaysTokenExpiresAt);
-			Console.WriteLine("claims cache duration: {0}", options.ClaimsCacheDuration);
+			Console.WriteLine("claims cache duration: {0}", options.ValidationResultCacheDuration);
 			Console.WriteLine("cache expiry evicts token at: {0}", cacheExpiryEvictsTokenAt);
 			Console.WriteLine("expected cache expiry: {0}", expectedCacheExpiry);
 		}

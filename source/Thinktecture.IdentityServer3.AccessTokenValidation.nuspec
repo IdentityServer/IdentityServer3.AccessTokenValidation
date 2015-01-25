@@ -9,7 +9,7 @@
     <projectUrl>https://github.com/identityserver/Thinktecture.IdentityServer3.AccessTokenValidation</projectUrl>
     <iconUrl>http://www.thinktecture.com/images/favicon.ico</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Token validation middleware for JWT and reference tokens issued by Thinktecture IdentityServer3.</description>
+    <description>Token validation middleware for JWT and reference tokens issued by IdentityServer3.</description>
     <copyright>Copyright 2014</copyright>
     <tags>Thinktecture IdentityServer OpenIDConnect OAuth2 owin</tags>
     
