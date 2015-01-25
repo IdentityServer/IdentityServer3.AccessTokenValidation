@@ -1,20 +1,21 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>Thinktecture.IdentityServer.v3.AccessTokenValidation</id>
+    <id>Thinktecture.IdentityServer3.AccessTokenValidation</id>
     <version>0.0.0</version>
-    <title>Thinktecture IdentityServer v3 Access Token Validation</title>
+    <title>Thinktecture IdentityServer3 Access Token Validation</title>
     <authors>Brock Allen, Dominick Baier</authors>
     <owners>Brock Allen, Dominick Baier</owners>
-    <projectUrl>https://github.com/thinktecture/Thinktecture.IdentityServer.v3.AccessTokenValidation</projectUrl>
+    <projectUrl>https://github.com/identityserver/Thinktecture.IdentityServer3.AccessTokenValidation</projectUrl>
     <iconUrl>http://www.thinktecture.com/images/favicon.ico</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Token validation middleware for JWT and reference tokens issued by Thinktecture IdentityServer v3.</description>
-    <copyright>Copyright 2014</copyright>
-    <tags>Thinktecture IdentityServer OpenIDConnect OAuth2 owin</tags>
+    <description>Access token validation middleware for JWT and reference tokens issued by IdentityServer3.</description>
+    <copyright>Copyright 2015</copyright>
+    <tags>Thinktecture IdentityServer OpenID Connect OpenIDConnect OAuth2 OWIN ASP.NET Katana WebApi SSO Federation Claims Identity JWT token</tags>
     
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System.Runtime.Caching"  />
+      <frameworkAssembly assemblyName="System.IdentityModel"  />
     </frameworkAssemblies>
 
     <dependencies>

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2014 Dominick Baier, Brock Allen
+ * Copyright 2015 Dominick Baier, Brock Allen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,32 +22,94 @@ using System.IdentityModel.Tokens;
 using System.Linq;
 using System.Net.Http;
 
-namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
+namespace Thinktecture.IdentityServer.AccessTokenValidation
 {
+    /// <summary>
+    /// Options class for configuring the access token validation middleware
+    /// </summary>
     public class IdentityServerBearerTokenAuthenticationOptions : AuthenticationOptions
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IdentityServerBearerTokenAuthenticationOptions"/> class.
+        /// </summary>
         public IdentityServerBearerTokenAuthenticationOptions() : base("Bearer")
         {
             ValidationMode = ValidationMode.ValidationEndpoint;
             RequiredScopes = Enumerable.Empty<string>();
 
-            ClaimsCacheDuration = TimeSpan.FromMinutes(5);
+            ValidationResultCacheDuration = TimeSpan.FromMinutes(5);
 
             NameClaimType = "name";
             RoleClaimType = "role";
         }
 
         // common for local and validation endpoint
+
+        /// <summary>
+        /// Gets or sets the validation mode (either local for JWT tokens, or using the validation endpoint for both JWT and reference tokens.
+        /// </summary>
+        /// <value>
+        /// The validation mode.
+        /// </value>
         public ValidationMode ValidationMode { get; set; }
+
+        /// <summary>
+        /// Gets or sets the base adress of IdentityServer - this is used to construct the URLs to the discovery document and the validation endpoint
+        /// </summary>
+        /// <value>
+        /// The authority.
+        /// </value>
         public string Authority { get; set; }
+
+        /// <summary>
+        /// Gets or sets one of the required scopes to access the API
+        /// </summary>
+        /// <value>
+        /// The required scopes.
+        /// </value>
         public IEnumerable<string> RequiredScopes { get; set; }
+
+        /// <summary>
+        /// Gets or sets the type of the name claim.
+        /// </summary>
+        /// <value>
+        /// The type of the name claim.
+        /// </value>
         public string NameClaimType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the type of the role claim.
+        /// </summary>
+        /// <value>
+        /// The type of the role claim.
+        /// </value>
         public string RoleClaimType { get; set; }
 
         // validation endoint specific
-        public bool EnableClaimsCache { get; set; }
-        public IClaimsCache ClaimsCache { get; set; }
-        public TimeSpan ClaimsCacheDuration { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the result of the validation endpoint should be cached.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if caching should be enabled; otherwise, <c>false</c>.
+        /// </value>
+        public bool EnableValidationResultCache { get; set; }
+
+        /// <summary>
+        /// Gets or sets the claims cache implementation (defaults to in-memory).
+        /// </summary>
+        /// <value>
+        /// The claims cache.
+        /// </value>
+        public IValidationResultCache ValidationResultCache { get; set; }
+
+        /// <summary>
+        /// Specifies for how long the validation results should be cached.
+        /// </summary>
+        /// <value>
+        /// The duration of the claims cache.
+        /// </value>
+        public TimeSpan ValidationResultCacheDuration { get; set; }
 
         /// <summary>
         /// Gets or sets the authentication provider.

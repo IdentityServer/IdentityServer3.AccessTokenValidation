@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2014 Dominick Baier, Brock Allen
+ * Copyright 2015 Dominick Baier, Brock Allen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,22 @@ using Microsoft.Owin.Security.OAuth;
 using System;
 using System.IdentityModel.Tokens;
 using System.Linq;
-using Thinktecture.IdentityServer.v3.AccessTokenValidation;
+using Thinktecture.IdentityServer.AccessTokenValidation;
 
 namespace Owin
 {
+    /// <summary>
+    /// Extension method for wiring up the access token validation middleware to the OWIN pipeline
+    /// </summary>
     public static class IdentityServerAccessTokenValidationAppBuilderExtensions
     {
+        /// <summary>
+        /// Adds the access token validation middleware to the OWIN pipeline.
+        /// </summary>
+        /// <param name="app">The application.</param>
+        /// <param name="options">The options.</param>
+        /// <returns></returns>
+        /// <exception cref="System.ArgumentNullException">options</exception>
         public static IAppBuilder UseIdentityServerBearerTokenAuthentication(this IAppBuilder app, IdentityServerBearerTokenAuthenticationOptions options)
         {
             if (options == null)
@@ -64,7 +74,7 @@ namespace Owin
                 options.BackchannelCertificateValidator,
                 options.BackchannelHttpHandler);
 
-            JwtFormat jwtFormat = null;
+            JwtFormat jwtFormat;
             if (options.TokenValidationParameters != null)
             {
                 jwtFormat = new JwtFormat(options.TokenValidationParameters, provider);
@@ -101,11 +111,11 @@ namespace Owin
 
         internal static void UseValidationEndpoint(this IAppBuilder app, IdentityServerBearerTokenAuthenticationOptions options)
         {
-            if (options.EnableClaimsCache)
+            if (options.EnableValidationResultCache)
             {
-                if (options.ClaimsCache == null)
+                if (options.ValidationResultCache == null)
                 {
-                    options.ClaimsCache = new InMemoryClaimsCache(options);
+                    options.ValidationResultCache = new InMemoryValidationResultCache(options);
                 }
             }
 

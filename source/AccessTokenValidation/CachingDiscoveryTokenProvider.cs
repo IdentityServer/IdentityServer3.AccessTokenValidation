@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2014 Dominick Baier, Brock Allen
+ * Copyright 2015 Dominick Baier, Brock Allen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,14 +25,12 @@ using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 
-namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
+namespace Thinktecture.IdentityServer.AccessTokenValidation
 {
     internal class DiscoveryCachingSecurityTokenProvider : IIssuerSecurityTokenProvider
     {
         private readonly TimeSpan _refreshInterval = new TimeSpan(1, 0, 0, 0);
         private readonly ReaderWriterLockSlim _synclock = new ReaderWriterLockSlim();
-        private readonly string _discoveryEndpoint;
-        private readonly HttpMessageHandler _backchannelHttpHandler;
         private readonly ConfigurationManager<OpenIdConnectConfiguration> _configurationManager;
         
         private DateTimeOffset _syncAfter = new DateTimeOffset(new DateTime(2001, 1, 1));
@@ -41,13 +39,12 @@ namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
 
         public DiscoveryCachingSecurityTokenProvider(string discoveryEndpoint, ICertificateValidator backchannelCertificateValidator, HttpMessageHandler backchannelHttpHandler)
         {
-            _discoveryEndpoint = discoveryEndpoint;
-            _backchannelHttpHandler = backchannelHttpHandler ?? new WebRequestHandler();
+            var handler = backchannelHttpHandler ?? new WebRequestHandler();
 
             if (backchannelCertificateValidator != null)
             {
                 // Set the cert validate callback
-                var webRequestHandler = _backchannelHttpHandler as WebRequestHandler;
+                var webRequestHandler = handler as WebRequestHandler;
                 if (webRequestHandler == null)
                 {
                     throw new InvalidOperationException("Invalid certificate validator");
@@ -55,7 +52,7 @@ namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
                 webRequestHandler.ServerCertificateValidationCallback = backchannelCertificateValidator.Validate;
             }
 
-            _configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(_discoveryEndpoint, new HttpClient(_backchannelHttpHandler));
+            _configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(discoveryEndpoint, new HttpClient(handler));
 
             RetrieveMetadata();
         }
@@ -101,7 +98,7 @@ namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
                         issuer += "/";
                     }
 
-                    return issuer += "resources";
+                    return issuer + "resources";
                 }
                 finally
                 {
@@ -143,7 +140,7 @@ namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
             _synclock.EnterWriteLock();
             try
             {
-                var result = AsyncHelper.RunSync<OpenIdConnectConfiguration>(async () => await _configurationManager.GetConfigurationAsync());
+                var result = AsyncHelper.RunSync(async () => await _configurationManager.GetConfigurationAsync());
                 var tokens = from key in result.JsonWebKeySet.Keys
                             select new X509SecurityToken(new X509Certificate2(Convert.FromBase64String(key.X5c.First())));
                 

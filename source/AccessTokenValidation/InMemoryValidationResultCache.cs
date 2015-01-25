@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2014 Dominick Baier, Brock Allen
+ * Copyright 2015 Dominick Baier, Brock Allen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,18 +20,39 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
+namespace Thinktecture.IdentityServer.AccessTokenValidation
 {
-    public class InMemoryClaimsCache : IClaimsCache
+    /// <summary>
+    /// In-memory cache for validation results
+    /// </summary>
+    public class InMemoryValidationResultCache : IValidationResultCache
     {
         private readonly IdentityServerBearerTokenAuthenticationOptions _options;
         private readonly ICache _cache;
 	    private readonly IClock _clock;
 
-	    public InMemoryClaimsCache(IdentityServerBearerTokenAuthenticationOptions options) : this(options, new Clock(), new Cache())
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InMemoryValidationResultCache"/> class.
+        /// </summary>
+        /// <param name="options">The options.</param>
+	    public InMemoryValidationResultCache(IdentityServerBearerTokenAuthenticationOptions options) 
+            : this(options, new Clock(), new Cache())
 	    { }
 
-	    public InMemoryClaimsCache(IdentityServerBearerTokenAuthenticationOptions options, IClock clock, ICache cache) 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InMemoryValidationResultCache"/> class.
+        /// </summary>
+        /// <param name="options">The options.</param>
+        /// <param name="clock">The clock.</param>
+        /// <param name="cache">The cache.</param>
+        /// <exception cref="System.ArgumentNullException">
+        /// clock
+        /// or
+        /// options
+        /// or
+        /// cache
+        /// </exception>
+	    public InMemoryValidationResultCache(IdentityServerBearerTokenAuthenticationOptions options, IClock clock, ICache cache) 
 		{
 		    if (clock == null) { throw new ArgumentNullException("clock"); }
 		    if (options == null) { throw new ArgumentNullException("options"); }
@@ -42,10 +63,16 @@ namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
 		    _clock = clock;
 	    }
 
+        /// <summary>
+        /// Add a validation result
+        /// </summary>
+        /// <param name="token">The token.</param>
+        /// <param name="claims">The claims.</param>
+        /// <returns></returns>
 	    public Task AddAsync(string token, IEnumerable<Claim> claims) 
         {
 		    var expiryClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.Expiration);
-		    var cacheExpirySetting = _clock.UtcNow.Add(_options.ClaimsCacheDuration);
+		    var cacheExpirySetting = _clock.UtcNow.Add(_options.ValidationResultCacheDuration);
 		    
             if (expiryClaim != null) {
 			    long epoch;
@@ -66,6 +93,11 @@ namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
             return Task.FromResult<object>(null);
         }
 
+        /// <summary>
+        /// Retrieves a validation result
+        /// </summary>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
         public Task<IEnumerable<Claim>> GetAsync(string token)
         {
             var result = _cache.Get(token);

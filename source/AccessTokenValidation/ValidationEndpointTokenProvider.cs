@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2014 Dominick Baier, Brock Allen
+ * Copyright 2015 Dominick Baier, Brock Allen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,9 @@ using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
+namespace Thinktecture.IdentityServer.AccessTokenValidation
 {
-    public class ValidationEndpointTokenProvider : AuthenticationTokenProvider
+    internal class ValidationEndpointTokenProvider : AuthenticationTokenProvider
     {
         private readonly HttpClient _client;
         private readonly string _tokenValidationEndpoint;
@@ -49,12 +49,12 @@ namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
 
         public override async Task ReceiveAsync(AuthenticationTokenReceiveContext context)
         {
-            if (_options.EnableClaimsCache)
+            if (_options.EnableValidationResultCache)
             {
-                var result = await _options.ClaimsCache.GetAsync(context.Token);
-                if (result != null)
+                var cachedClaims = await _options.ValidationResultCache.GetAsync(context.Token);
+                if (cachedClaims != null)
                 {
-                    context.SetTicket(new AuthenticationTicket(new ClaimsIdentity(result, _options.AuthenticationType), new AuthenticationProperties()));
+                    SetAuthenticationTicket(context, cachedClaims);
                     return;
                 }
             }
@@ -89,16 +89,21 @@ namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
                 }
             }
 
-            if (_options.EnableClaimsCache)
+            if (_options.EnableValidationResultCache)
             {
-                await _options.ClaimsCache.AddAsync(context.Token, claims);
+                await _options.ValidationResultCache.AddAsync(context.Token, claims);
             }
 
+            SetAuthenticationTicket(context, claims);
+        }
+
+        private void SetAuthenticationTicket(AuthenticationTokenReceiveContext context, IEnumerable<Claim> claims)
+        {
             var id = new ClaimsIdentity(
-                claims,
-                _options.AuthenticationType,
-                _options.NameClaimType,
-                _options.RoleClaimType);
+                            claims,
+                            _options.AuthenticationType,
+                            _options.NameClaimType,
+                            _options.RoleClaimType);
 
             context.SetTicket(new AuthenticationTicket(id, new AuthenticationProperties()));
         }

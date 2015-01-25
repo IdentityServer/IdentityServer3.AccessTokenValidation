@@ -150,3 +150,6 @@ $RECYCLE.BIN/
 # Mac crap
 .DS_Store
 distribution/
+
+#Roslyn compiler temp folders
+*.sln.ide/

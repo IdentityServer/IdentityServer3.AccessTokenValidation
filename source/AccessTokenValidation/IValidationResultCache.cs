@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2014 Dominick Baier, Brock Allen
+ * Copyright 2015 Dominick Baier, Brock Allen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,26 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
+namespace Thinktecture.IdentityServer.AccessTokenValidation
 {
-    public interface IClaimsCache
+    /// <summary>
+    /// Interface for caching then token validation result
+    /// </summary>
+    public interface IValidationResultCache
     {
+        /// <summary>
+        /// Add a validation result
+        /// </summary>
+        /// <param name="token">The token.</param>
+        /// <param name="claims">The claims.</param>
+        /// <returns></returns>
         Task AddAsync(string token, IEnumerable<Claim> claims);
+
+        /// <summary>
+        /// Retrieves a validation result
+        /// </summary>
+        /// <param name="token">The token.</param>
+        /// <returns></returns>
         Task<IEnumerable<Claim>> GetAsync(string token);
     }
 }

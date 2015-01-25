@@ -7,8 +7,8 @@
     <ProjectGuid>{DF867B5D-3A9E-443A-B95E-D8F11E2A88A3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Thinktecture.IdentityServer.v3.AccessTokenValidation</RootNamespace>
-    <AssemblyName>Thinktecture.IdentityServer.v3.AccessTokenValidation</AssemblyName>
+    <RootNamespace>Thinktecture.IdentityServer.AccessTokenValidation</RootNamespace>
+    <AssemblyName>Thinktecture.IdentityServer3.AccessTokenValidation</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\..\build\Thinktecture.IdentityServer3.AccessTokenValidation.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -28,6 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\..\build\Thinktecture.IdentityServer3.AccessTokenValidation.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.IdentityModel.Protocol.Extensions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -79,12 +81,12 @@
     <Compile Include="Clock.cs" />
     <Compile Include="EpochTimeExtensions.cs" />
     <Compile Include="ICache.cs" />
-    <Compile Include="IClaimsCache.cs" />
+    <Compile Include="IValidationResultCache.cs" />
     <Compile Include="IClock.cs" />
     <Compile Include="IdentityServerAccessTokenValidationAppBuilderExtensions.cs" />
     <Compile Include="IdentityServerBearerTokensAuthenticationOptions.cs" />
     <Compile Include="Cache.cs" />
-    <Compile Include="InMemoryClaimsCache.cs" />
+    <Compile Include="InMemoryValidationResultCache.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScopeRequirementMiddleware.cs" />
     <Compile Include="ValidationEndpointTokenProvider.cs" />

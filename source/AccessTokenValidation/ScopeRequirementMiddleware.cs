@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2014 Dominick Baier, Brock Allen
+ * Copyright 2015 Dominick Baier, Brock Allen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
+namespace Thinktecture.IdentityServer.AccessTokenValidation
 {
-    public class ScopeRequirementMiddleware
+    internal class ScopeRequirementMiddleware
     {
         private readonly Func<IDictionary<string, object>, Task> _next;
         private readonly IEnumerable<string> _scopes;
@@ -55,8 +55,6 @@ namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
             context.Response.Headers.Add("WWW-Authenticate", new[] { "Bearer error=\"insufficient_scope\"" });
 
             EmitCorsResponseHeaders(env);
-
-            return;
         }
 
         private void EmitCorsResponseHeaders(IDictionary<string, object> env)
@@ -84,7 +82,7 @@ namespace Thinktecture.IdentityServer.v3.AccessTokenValidation
         {
             var scopeClaims = context.Authentication.User.FindAll("scope");
 
-            if (scopeClaims == null || scopeClaims.Count() == 0)
+            if (scopeClaims == null || !scopeClaims.Any())
             {
                 return false;
             }
