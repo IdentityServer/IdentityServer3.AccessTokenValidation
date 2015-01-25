@@ -3,7 +3,7 @@
   <metadata>
     <id>Thinktecture.IdentityServer3.AccessTokenValidation</id>
     <version>0.0.0</version>
-    <title>Thinktecture IdentityServer3 Access Token Validation</title>
+    <title>Thinktecture IdentityServer3 - Access Token Validation</title>
     <authors>Brock Allen, Dominick Baier</authors>
     <owners>Brock Allen, Dominick Baier</owners>
     <projectUrl>https://github.com/identityserver/Thinktecture.IdentityServer3.AccessTokenValidation</projectUrl>
