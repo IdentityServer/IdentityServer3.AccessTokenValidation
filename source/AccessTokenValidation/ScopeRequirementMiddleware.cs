@@ -65,6 +65,7 @@ namespace Thinktecture.IdentityServer.AccessTokenValidation
             if (ctx.Request.Headers.TryGetValue("Origin", out values))
             {
                 ctx.Response.Headers.Add("Access-Control-Allow-Origin", values);
+                ctx.Response.Headers.Add("Access-Control-Expose-Headers", new string[] { "WWW-Authenticate" });
             }
 
             if (ctx.Request.Headers.TryGetValue("Access-Control-Request-Method", out values))
