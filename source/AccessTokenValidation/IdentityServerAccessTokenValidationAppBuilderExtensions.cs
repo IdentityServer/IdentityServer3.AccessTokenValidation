@@ -61,46 +61,63 @@ namespace Owin
 
         internal static void UseLocalValidation(this IAppBuilder app, IdentityServerBearerTokenAuthenticationOptions options)
         {
-            var discoveryEndpoint = options.Authority;
-            if (!discoveryEndpoint.EndsWith("/"))
-            {
-                discoveryEndpoint += "/";
-            }
+            JwtFormat tokenFormat = null;
 
-            discoveryEndpoint += ".well-known/openid-configuration";
-            
-            var provider = new DiscoveryCachingSecurityTokenProvider(
-                discoveryEndpoint,
-                options.BackchannelCertificateValidator,
-                options.BackchannelHttpHandler);
-
-            JwtFormat jwtFormat;
-            if (options.TokenValidationParameters != null)
+            // use discovery document to fully configure middleware
+            if (!string.IsNullOrEmpty(options.Authority))
             {
-                jwtFormat = new JwtFormat(options.TokenValidationParameters, provider);
+                var discoveryEndpoint = options.Authority.EnsureTrailingSlash();
+                discoveryEndpoint += ".well-known/openid-configuration";
+
+                var issuerProvider = new CachingDiscoveryIssuerSecurityTokenProvider(
+                    discoveryEndpoint,
+                    options);
+
+                if (options.TokenValidationParameters != null)
+                {
+                    tokenFormat = new JwtFormat(options.TokenValidationParameters, issuerProvider);
+                }
+                else
+                {
+                    var valParams = new TokenValidationParameters
+                    {
+                        ValidAudience = issuerProvider.Audience,
+                        NameClaimType = options.NameClaimType,
+                        RoleClaimType = options.RoleClaimType
+                    };
+
+                    tokenFormat = new JwtFormat(valParams, issuerProvider);
+                }
             }
+            // use token validation parameters
+            else if (options.TokenValidationParameters != null)
+            {
+                tokenFormat = new JwtFormat(options.TokenValidationParameters);
+            }
+            // use simplified manual configuration
             else
             {
                 var valParams = new TokenValidationParameters
                 {
-                    ValidAudience = provider.Audience,
+                    ValidIssuer = options.IssuerName,
+                    ValidAudience = options.IssuerName.EnsureTrailingSlash() + "resources",
+                    IssuerSigningToken = new X509SecurityToken(options.IssuerCertificate),
                     NameClaimType = options.NameClaimType,
                     RoleClaimType = options.RoleClaimType
                 };
 
-                jwtFormat = new JwtFormat(valParams, provider);
+                tokenFormat = new JwtFormat(valParams);
             }
 
             if (options.TokenHandler != null)
             {
-                jwtFormat.TokenHandler = options.TokenHandler;
+                tokenFormat.TokenHandler = options.TokenHandler;
             }
 
             var bearerOptions = new OAuthBearerAuthenticationOptions
             {
-                Realm = provider.Audience,
                 Provider = options.Provider,
-                AccessTokenFormat = jwtFormat,
+                AccessTokenFormat = tokenFormat,
                 AuthenticationMode = options.AuthenticationMode,
                 AuthenticationType = options.AuthenticationType,
                 Description = options.Description
