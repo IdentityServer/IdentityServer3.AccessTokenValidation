@@ -15,7 +15,6 @@
  */
 
 using Microsoft.IdentityModel.Protocols;
-using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Jwt;
 using System;
 using System.Collections.Generic;
@@ -27,7 +26,7 @@ using System.Threading;
 
 namespace Thinktecture.IdentityServer.AccessTokenValidation
 {
-    internal class DiscoveryCachingSecurityTokenProvider : IIssuerSecurityTokenProvider
+    internal class CachingDiscoveryIssuerSecurityTokenProvider : IIssuerSecurityTokenProvider
     {
         private readonly TimeSpan _refreshInterval = new TimeSpan(1, 0, 0, 0);
         private readonly ReaderWriterLockSlim _synclock = new ReaderWriterLockSlim();
@@ -37,11 +36,11 @@ namespace Thinktecture.IdentityServer.AccessTokenValidation
         private string _issuer;
         private IEnumerable<SecurityToken> _tokens;
 
-        public DiscoveryCachingSecurityTokenProvider(string discoveryEndpoint, ICertificateValidator backchannelCertificateValidator, HttpMessageHandler backchannelHttpHandler)
+        public CachingDiscoveryIssuerSecurityTokenProvider(string discoveryEndpoint, IdentityServerBearerTokenAuthenticationOptions options)
         {
-            var handler = backchannelHttpHandler ?? new WebRequestHandler();
+            var handler = options.BackchannelHttpHandler ?? new WebRequestHandler();
 
-            if (backchannelCertificateValidator != null)
+            if (options.BackchannelCertificateValidator != null)
             {
                 // Set the cert validate callback
                 var webRequestHandler = handler as WebRequestHandler;
@@ -49,11 +48,10 @@ namespace Thinktecture.IdentityServer.AccessTokenValidation
                 {
                     throw new InvalidOperationException("Invalid certificate validator");
                 }
-                webRequestHandler.ServerCertificateValidationCallback = backchannelCertificateValidator.Validate;
+                webRequestHandler.ServerCertificateValidationCallback = options.BackchannelCertificateValidator.Validate;
             }
 
             _configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(discoveryEndpoint, new HttpClient(handler));
-
             RetrieveMetadata();
         }
 
@@ -91,13 +89,7 @@ namespace Thinktecture.IdentityServer.AccessTokenValidation
                 _synclock.EnterReadLock();
                 try
                 {
-                    var issuer = _issuer;
-
-                    if (!issuer.EndsWith("/"))
-                    {
-                        issuer += "/";
-                    }
-
+                    var issuer = _issuer.EnsureTrailingSlash();
                     return issuer + "resources";
                 }
                 finally
