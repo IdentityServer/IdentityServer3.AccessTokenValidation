@@ -1,3 +1,17 @@
+# vNext
+
+ - [#22](https://github.com/IdentityServer/Thinktecture.IdentityServer3.AccessTokenValidation/issues/22) - EpochTimeExtensions and Clock Internal
+
+Commits: [...](https://github.com/identityserver/Thinktecture.IdentityServer3.AccessTokenValidation/compare/...)
+
+
+# 1.2.0 (22 Februar 2015)
+
+ - [#23](https://github.com/IdentityServer/Thinktecture.IdentityServer3.AccessTokenValidation/issues/23) - UseIdentityServerBearerTokenAuthentication with IdentityServerV2?
+
+Commits: [693e78f2ee...ad42c56f0a](https://github.com/identityserver/Thinktecture.IdentityServer3.AccessTokenValidation/compare/693e78f2ee...ad42c56f0a)
+
+
 # 1.1.0 (08 Februar 2015)
 
  - [#21](https://github.com/IdentityServer/Thinktecture.IdentityServer3.AccessTokenValidation/issues/21) - Version conflict on JwtSecurityTokenHandler
