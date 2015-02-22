@@ -18,8 +18,17 @@ using System;
 
 namespace Thinktecture.IdentityServer.AccessTokenValidation
 {
-	internal class Clock : IClock
+    /// <summary>
+    /// Default clock implementation based on DateTimeOffset
+    /// </summary>
+	public class Clock : IClock
 	{
+        /// <summary>
+        /// Gets the current UTC date/time 
+        /// </summary>
+        /// <value>
+        /// UtcNow
+        /// </value>
 		public DateTimeOffset UtcNow 
 		{
 			get { return DateTimeOffset.UtcNow; }
