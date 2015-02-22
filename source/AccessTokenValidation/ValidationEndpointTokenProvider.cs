@@ -17,6 +17,7 @@
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Infrastructure;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -33,17 +34,25 @@ namespace Thinktecture.IdentityServer.AccessTokenValidation
 
         public ValidationEndpointTokenProvider(IdentityServerBearerTokenAuthenticationOptions options)
         {
-            var authority = options.Authority;
+            var baseAddress = options.Authority.EnsureTrailingSlash();
+            baseAddress += "connect/accesstokenvalidation";
+            _tokenValidationEndpoint = baseAddress + "?token={0}";
 
-            if (!authority.EndsWith("/"))
+            var handler = options.BackchannelHttpHandler ?? new WebRequestHandler();
+
+            if (options.BackchannelCertificateValidator != null)
             {
-                authority += "/";
+                // Set the cert validate callback
+                var webRequestHandler = handler as WebRequestHandler;
+                if (webRequestHandler == null)
+                {
+                    throw new InvalidOperationException("Invalid certificate validator");
+                }
+
+                webRequestHandler.ServerCertificateValidationCallback = options.BackchannelCertificateValidator.Validate;
             }
 
-            authority += "connect/accesstokenvalidation";
-
-            _tokenValidationEndpoint = authority + "?token={0}";
-            _client = new HttpClient();
+            _client = new HttpClient(handler);
             _options = options;
         }
 
