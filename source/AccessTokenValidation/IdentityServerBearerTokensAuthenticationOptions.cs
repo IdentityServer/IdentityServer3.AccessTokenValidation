@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Thinktecture.IdentityServer.AccessTokenValidation
 {
@@ -85,7 +86,21 @@ namespace Thinktecture.IdentityServer.AccessTokenValidation
         /// </value>
         public string RoleClaimType { get; set; }
 
-        // validation endoint specific
+        /// <summary>
+        /// Gets or sets the name of the issuer (only use if authority is not set).
+        /// </summary>
+        /// <value>
+        /// The name of the issuer.
+        /// </value>
+        public string IssuerName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the issuer certificate (only used if authority is not set).
+        /// </summary>
+        /// <value>
+        /// The issuer certificate.
+        /// </value>
+        public X509Certificate2 IssuerCertificate { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the result of the validation endpoint should be cached.
