@@ -53,7 +53,7 @@ namespace Owin
 
             if (options.RequiredScopes.Any())
             {
-                app.Use<ScopeRequirementMiddleware>(options.RequiredScopes.ToArray());
+                app.Use<ScopeRequirementMiddleware>(options.RequiredScopes);
             }
 
             return app;
