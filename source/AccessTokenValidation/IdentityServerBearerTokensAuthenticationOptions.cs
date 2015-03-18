@@ -36,7 +36,7 @@ namespace Thinktecture.IdentityServer.AccessTokenValidation
         public IdentityServerBearerTokenAuthenticationOptions() : base("Bearer")
         {
             ValidationMode = ValidationMode.ValidationEndpoint;
-            RequiredScopes = Enumerable.Empty<string>();
+            RequiredScopes = new string[] { };
 
             ValidationResultCacheDuration = TimeSpan.FromMinutes(5);
 
@@ -68,7 +68,7 @@ namespace Thinktecture.IdentityServer.AccessTokenValidation
         /// <value>
         /// The required scopes.
         /// </value>
-        public IEnumerable<string> RequiredScopes { get; set; }
+        public string[] RequiredScopes { get; set; }
 
         /// <summary>
         /// Gets or sets the type of the name claim.
