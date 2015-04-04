@@ -24,7 +24,7 @@ using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 
-namespace Thinktecture.IdentityServer.AccessTokenValidation
+namespace IdentityServer3.AccessTokenValidation
 {
     internal class CachingDiscoveryIssuerSecurityTokenProvider : IIssuerSecurityTokenProvider
     {

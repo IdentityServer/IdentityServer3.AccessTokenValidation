@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>Thinktecture.IdentityServer3.AccessTokenValidation</id>
+    <id>IdentityServer3.AccessTokenValidation</id>
     <version>0.0.0</version>
-    <title>Thinktecture IdentityServer3 - Access Token Validation</title>
+    <title>IdentityServer3 - Access Token Validation</title>
     <authors>Brock Allen, Dominick Baier</authors>
     <owners>Brock Allen, Dominick Baier</owners>
     <projectUrl>https://github.com/identityserver/Thinktecture.IdentityServer3.AccessTokenValidation</projectUrl>
-    <iconUrl>http://www.thinktecture.com/images/favicon.ico</iconUrl>
+    <iconUrl>https://identityserver.github.io/Documentation/assets/images/icons/IDserver_icon128.jpg</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <licenseUrl>https://github.com/IdentityServer/Thinktecture.IdentityServer3.AccessTokenValidation/blob/master/LICENSE</licenseUrl>
+    <licenseUrl>https://github.com/IdentityServer/IdentityServer3.AccessTokenValidation/blob/master/LICENSE</licenseUrl>
     <description>Access token validation middleware for JWT and reference tokens issued by IdentityServer3.</description>
     <copyright>Copyright 2015</copyright>
     <tags>Thinktecture IdentityServer OpenID Connect OpenIDConnect OAuth2 OWIN ASP.NET Katana WebApi SSO Federation Claims Identity JWT token</tags>

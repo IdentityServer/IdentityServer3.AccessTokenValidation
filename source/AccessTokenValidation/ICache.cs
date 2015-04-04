@@ -16,7 +16,7 @@
 
 using System;
 
-namespace Thinktecture.IdentityServer.AccessTokenValidation
+namespace IdentityServer3.AccessTokenValidation
 {
     /// <summary>
     /// Abstraction for a cache

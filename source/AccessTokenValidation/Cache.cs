@@ -17,7 +17,7 @@
 using System;
 using System.Runtime.Caching;
 
-namespace Thinktecture.IdentityServer.AccessTokenValidation
+namespace IdentityServer3.AccessTokenValidation
 {
     /// <summary>
     /// Cache implementation using System.Runtime.Cachine.MemoryCache

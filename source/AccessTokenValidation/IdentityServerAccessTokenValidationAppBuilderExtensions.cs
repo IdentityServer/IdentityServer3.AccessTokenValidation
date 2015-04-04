@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
+using IdentityServer3.AccessTokenValidation;
 using Microsoft.Owin.Security.Jwt;
 using Microsoft.Owin.Security.OAuth;
 using System;
 using System.IdentityModel.Tokens;
 using System.Linq;
-using Thinktecture.IdentityServer.AccessTokenValidation;
 
 namespace Owin
 {
