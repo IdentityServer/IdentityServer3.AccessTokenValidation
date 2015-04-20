@@ -17,7 +17,9 @@
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OAuth;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens;
+using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 
@@ -34,7 +36,7 @@ namespace IdentityServer3.AccessTokenValidation
         public IdentityServerBearerTokenAuthenticationOptions() : base("Bearer")
         {
             ValidationMode = ValidationMode.ValidationEndpoint;
-            RequiredScopes = new string[] { };
+            RequiredScopes = Enumerable.Empty<string>();
 
             ValidationResultCacheDuration = TimeSpan.FromMinutes(5);
 
@@ -66,7 +68,7 @@ namespace IdentityServer3.AccessTokenValidation
         /// <value>
         /// The required scopes.
         /// </value>
-        public string[] RequiredScopes { get; set; }
+        public IEnumerable<string> RequiredScopes { get; set; }
 
         /// <summary>
         /// Gets or sets the type of the name claim.

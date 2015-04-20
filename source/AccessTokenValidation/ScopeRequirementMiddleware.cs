@@ -27,7 +27,7 @@ namespace IdentityServer3.AccessTokenValidation
         private readonly Func<IDictionary<string, object>, Task> _next;
         private readonly IEnumerable<string> _scopes;
 
-        public ScopeRequirementMiddleware(Func<IDictionary<string, object>, Task> next, params string[] scopes)
+        public ScopeRequirementMiddleware(Func<IDictionary<string, object>, Task> next, IEnumerable<string> scopes)
         {
             _next = next;
             _scopes = scopes;
