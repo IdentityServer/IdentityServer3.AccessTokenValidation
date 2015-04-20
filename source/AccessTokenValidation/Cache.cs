@@ -24,7 +24,7 @@ namespace IdentityServer3.AccessTokenValidation
     /// </summary>
 	public class Cache : ICache
 	{
-		const string CacheName = "thinktecture.validationCache";
+        const string CacheName = "IdentityServer3.validationCache";
 		readonly MemoryCache _cache = new MemoryCache(CacheName);
 
         /// <summary>
