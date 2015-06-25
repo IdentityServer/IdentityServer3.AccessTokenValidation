@@ -36,7 +36,7 @@ namespace IdentityServer3.AccessTokenValidation
         {
             var baseAddress = options.Authority.EnsureTrailingSlash();
             baseAddress += "connect/accesstokenvalidation";
-            _tokenValidationEndpoint = baseAddress + "?token={0}";
+            _tokenValidationEndpoint = baseAddress;
 
             var handler = options.BackchannelHttpHandler ?? new WebRequestHandler();
 
@@ -68,9 +68,12 @@ namespace IdentityServer3.AccessTokenValidation
                 }
             }
 
-            var url = string.Format(_tokenValidationEndpoint, context.Token);
+            var form = new Dictionary<string, string>
+            {
+                { "token", context.Token }
+            };
 
-            var response = await _client.GetAsync(url);
+            var response = await _client.PostAsync(_tokenValidationEndpoint, new FormUrlEncodedContent(form));
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 return;
