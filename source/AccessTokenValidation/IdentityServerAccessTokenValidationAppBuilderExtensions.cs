@@ -15,6 +15,7 @@
  */
 
 using IdentityServer3.AccessTokenValidation;
+using Microsoft.Owin.Logging;
 using Microsoft.Owin.Security.Jwt;
 using Microsoft.Owin.Security.OAuth;
 using System;
@@ -138,7 +139,7 @@ namespace Owin
 
             app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions
             {
-                AccessTokenProvider = new ValidationEndpointTokenProvider(options),
+                AccessTokenProvider = new ValidationEndpointTokenProvider(options, app.GetLoggerFactory()),
                 Provider = options.Provider
             });
         }
