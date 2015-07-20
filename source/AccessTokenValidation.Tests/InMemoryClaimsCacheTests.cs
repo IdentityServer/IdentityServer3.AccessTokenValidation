@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
-using IdentityModel.Extensions;
+using IdentityModel;
 using IdentityServer3.AccessTokenValidation;
 using Xunit;
 
