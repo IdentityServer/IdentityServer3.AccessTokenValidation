@@ -29,6 +29,6 @@ namespace IdentityServer3.AccessTokenValidation
         /// <summary>
         /// Use the validation endpoint (works for both JWT and reference tokens)
         /// </summary>
-        ValidationEndpoint,
+        ValidationEndpoint
     }
 }

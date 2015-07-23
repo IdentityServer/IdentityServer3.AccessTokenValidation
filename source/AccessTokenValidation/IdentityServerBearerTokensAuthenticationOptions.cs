@@ -36,6 +36,7 @@ namespace IdentityServer3.AccessTokenValidation
         public IdentityServerBearerTokenAuthenticationOptions() : base("Bearer")
         {
             ValidationMode = ValidationMode.ValidationEndpoint;
+            UseLegacyAccessTokenValidationEndpoint = false;
             RequiredScopes = Enumerable.Empty<string>();
 
             ValidationResultCacheDuration = TimeSpan.FromMinutes(5);
@@ -53,6 +54,31 @@ namespace IdentityServer3.AccessTokenValidation
         /// The validation mode.
         /// </value>
         public ValidationMode ValidationMode { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to use the legacy access token validation endpoint
+        /// or the token introspection endpoint.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if [use legacy access token validation endpoint]; otherwise, <c>false</c>.
+        /// </value>
+        public bool UseLegacyAccessTokenValidationEndpoint { get; set; }
+
+        /// <summary>
+        /// Gets or sets the scope identifier for authentication with the introspection endpoint.
+        /// </summary>
+        /// <value>
+        /// The scope identifier.
+        /// </value>
+        public string ScopeId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the scope secret for authentication with the introspection endpoint.
+        /// </summary>
+        /// <value>
+        /// The scope secret.
+        /// </value>
+        public string ScopeSecret { get; set; }
 
         /// <summary>
         /// Gets or sets the base adress of IdentityServer - this is used to construct the URLs to the discovery document and the validation endpoint

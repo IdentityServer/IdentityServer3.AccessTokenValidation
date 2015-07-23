@@ -137,11 +137,28 @@ namespace Owin
                 }
             }
 
-            app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions
+            if (options.UseLegacyAccessTokenValidationEndpoint)
             {
-                AccessTokenProvider = new ValidationEndpointTokenProvider(options, app.GetLoggerFactory()),
-                Provider = options.Provider
-            });
+                app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions
+                {
+                    AccessTokenProvider = new ValidationEndpointTokenProvider(options, app.GetLoggerFactory()),
+                    Provider = options.Provider
+                });
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(options.ScopeId) ||
+                    string.IsNullOrWhiteSpace(options.ScopeSecret))
+                {
+                    throw new ArgumentException("ScopeId and ScopeSecret must be set when using the introspection endpoint");
+                }
+
+                app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions
+                {
+                    AccessTokenProvider = new IntrospectionEndpointTokenProvider(options, app.GetLoggerFactory()),
+                    Provider = options.Provider
+                });
+            }
         }
     }
 }
