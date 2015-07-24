@@ -18,15 +18,29 @@ using IdentityServer3.AccessTokenValidation;
 using Microsoft.Owin.Logging;
 using Microsoft.Owin.Security.Jwt;
 using Microsoft.Owin.Security.OAuth;
+using System;
 using System.IdentityModel.Tokens;
 using System.Linq;
 
 namespace Owin
 {
+    /// <summary>
+    /// AppBuilder extensions for identity server token validation
+    /// </summary>
     public static class IdentityServerTokenValidationAppBuilderExtensions
     {
+        /// <summary>
+        /// Add identity server token authentication to the pipeline.
+        /// </summary>
+        /// <param name="app">The application.</param>
+        /// <param name="options">The options.</param>
+        /// <returns></returns>
         public static IAppBuilder UseIdentityServerTokenAuthentication(this IAppBuilder app, IdentityServerTokenAuthenticationOptions options)
         {
+            if (app == null) throw new ArgumentNullException("app");
+            if (options == null) throw new ArgumentNullException("options");
+            if (string.IsNullOrEmpty(options.Authority)) throw new ArgumentException("Authority must be set", "authority");
+
             var loggerFactory = app.GetLoggerFactory();
             var middlewareOptions = new IdentityServerOAuthBearerAuthenticationOptions();
 
@@ -85,7 +99,8 @@ namespace Owin
 
             var issuerProvider = new DiscoveryDocumentIssuerSecurityTokenProvider(
                 discoveryEndpoint,
-                options);
+                options,
+                loggerFactory);
 
             var valParams = new TokenValidationParameters
             {
