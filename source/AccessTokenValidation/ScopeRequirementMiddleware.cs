@@ -19,15 +19,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AppFunc = System.Func<System.Collections.Generic.IDictionary<string, object>, System.Threading.Tasks.Task>;
 
 namespace IdentityServer3.AccessTokenValidation
 {
-    internal class ScopeRequirementMiddleware
+    public class ScopeRequirementMiddleware
     {
-        private readonly Func<IDictionary<string, object>, Task> _next;
+        private readonly AppFunc _next;
         private readonly IEnumerable<string> _scopes;
 
-        public ScopeRequirementMiddleware(Func<IDictionary<string, object>, Task> next, IEnumerable<string> scopes)
+        public ScopeRequirementMiddleware(AppFunc next, IEnumerable<string> scopes)
         {
             _next = next;
             _scopes = scopes;
@@ -90,7 +91,7 @@ namespace IdentityServer3.AccessTokenValidation
 
             foreach (var scope in scopeClaims)
             {
-                if (_scopes.Contains(scope.Value))
+                if (_scopes.Contains(scope.Value, StringComparer.Ordinal))
                 {
                     return true;
                 }

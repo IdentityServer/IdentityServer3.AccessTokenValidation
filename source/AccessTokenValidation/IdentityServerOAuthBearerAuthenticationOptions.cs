@@ -14,26 +14,15 @@
  * limitations under the License.
  */
 
+using Microsoft.Owin.Security.OAuth;
+
 namespace IdentityServer3.AccessTokenValidation
 {
-    /// <summary>
-    /// Enum for specifying where to validate the access token
-    /// </summary>
-    public enum ValidationMode
+    public class IdentityServerOAuthBearerAuthenticationOptions
     {
-        /// <summary>
-        /// Use local validation for JWTs and the validation endpoint for reference tokens
-        /// </summary>
-        Both,
+        public IOAuthBearerAuthenticationProvider TokenProvider { get; set; }
 
-        /// <summary>
-        /// Use local validation oly (only suitable for JWT tokens)
-        /// </summary>
-        LocalOnly,
-
-        /// <summary>
-        /// Use the validation endpoint only (works for both JWT and reference tokens)
-        /// </summary>
-        ValidationEndpointOnly
+        public OAuthBearerAuthenticationOptions LocalValidationOptions { get; set; }
+        public OAuthBearerAuthenticationOptions EndpointValidationOptions { get; set; }
     }
 }

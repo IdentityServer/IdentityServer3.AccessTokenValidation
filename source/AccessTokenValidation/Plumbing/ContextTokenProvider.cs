@@ -13,27 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Microsoft.Owin.Security.OAuth;
+using System;
+using System.Threading.Tasks;
 
 namespace IdentityServer3.AccessTokenValidation
 {
-    /// <summary>
-    /// Enum for specifying where to validate the access token
-    /// </summary>
-    public enum ValidationMode
+    public class ContextTokenProvider : IOAuthBearerAuthenticationProvider
     {
-        /// <summary>
-        /// Use local validation for JWTs and the validation endpoint for reference tokens
-        /// </summary>
-        Both,
+        public Task ApplyChallenge(OAuthChallengeContext context)
+        {
+            throw new NotImplementedException();
+        }
 
-        /// <summary>
-        /// Use local validation oly (only suitable for JWT tokens)
-        /// </summary>
-        LocalOnly,
+        public Task RequestToken(OAuthRequestTokenContext context)
+        {
+            context.Token = context.OwinContext.Get<string>("idsrv:tokenvalidation:token");
+            return Task.FromResult(0);
+        }
 
-        /// <summary>
-        /// Use the validation endpoint only (works for both JWT and reference tokens)
-        /// </summary>
-        ValidationEndpointOnly
+        public Task ValidateIdentity(OAuthValidateIdentityContext context)
+        {
+            return Task.FromResult(0);
+        }
     }
 }

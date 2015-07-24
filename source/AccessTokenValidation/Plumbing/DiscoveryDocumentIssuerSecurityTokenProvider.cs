@@ -26,7 +26,7 @@ using System.Threading;
 
 namespace IdentityServer3.AccessTokenValidation
 {
-    internal class CachingDiscoveryIssuerSecurityTokenProvider : IIssuerSecurityTokenProvider
+    internal class DiscoveryDocumentIssuerSecurityTokenProvider : IIssuerSecurityTokenProvider
     {
         private readonly TimeSpan _refreshInterval = new TimeSpan(1, 0, 0, 0);
         private readonly ReaderWriterLockSlim _synclock = new ReaderWriterLockSlim();
@@ -36,7 +36,7 @@ namespace IdentityServer3.AccessTokenValidation
         private string _issuer;
         private IEnumerable<SecurityToken> _tokens;
 
-        public CachingDiscoveryIssuerSecurityTokenProvider(string discoveryEndpoint, IdentityServerBearerTokenAuthenticationOptions options)
+        public DiscoveryDocumentIssuerSecurityTokenProvider(string discoveryEndpoint, IdentityServerTokenAuthenticationOptions options)
         {
             var handler = options.BackchannelHttpHandler ?? new WebRequestHandler();
 

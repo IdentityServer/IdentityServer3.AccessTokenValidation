@@ -27,17 +27,17 @@ namespace IdentityServer3.AccessTokenValidation
     /// </summary>
     public class InMemoryValidationResultCache : IValidationResultCache
     {
-        private readonly IdentityServerBearerTokenAuthenticationOptions _options;
+        private readonly IdentityServerTokenAuthenticationOptions _options;
         private readonly ICache _cache;
-	    private readonly IClock _clock;
+        private readonly IClock _clock;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InMemoryValidationResultCache"/> class.
         /// </summary>
         /// <param name="options">The options.</param>
-	    public InMemoryValidationResultCache(IdentityServerBearerTokenAuthenticationOptions options) 
+        public InMemoryValidationResultCache(IdentityServerTokenAuthenticationOptions options)
             : this(options, new Clock(), new Cache())
-	    { }
+        { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InMemoryValidationResultCache"/> class.
@@ -52,16 +52,16 @@ namespace IdentityServer3.AccessTokenValidation
         /// or
         /// cache
         /// </exception>
-	    public InMemoryValidationResultCache(IdentityServerBearerTokenAuthenticationOptions options, IClock clock, ICache cache) 
-		{
-		    if (clock == null) { throw new ArgumentNullException("clock"); }
-		    if (options == null) { throw new ArgumentNullException("options"); }
-		    if (cache == null) { throw new ArgumentNullException("cache"); }
+        public InMemoryValidationResultCache(IdentityServerTokenAuthenticationOptions options, IClock clock, ICache cache)
+        {
+            if (clock == null) { throw new ArgumentNullException("clock"); }
+            if (options == null) { throw new ArgumentNullException("options"); }
+            if (cache == null) { throw new ArgumentNullException("cache"); }
 
-			_options = options;
-		    _cache = cache;
-		    _clock = clock;
-	    }
+            _options = options;
+            _cache = cache;
+            _clock = clock;
+        }
 
         /// <summary>
         /// Add a validation result
@@ -69,25 +69,26 @@ namespace IdentityServer3.AccessTokenValidation
         /// <param name="token">The token.</param>
         /// <param name="claims">The claims.</param>
         /// <returns></returns>
-	    public Task AddAsync(string token, IEnumerable<Claim> claims) 
+        public Task AddAsync(string token, IEnumerable<Claim> claims)
         {
-		    var expiryClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.Expiration);
-		    var cacheExpirySetting = _clock.UtcNow.Add(_options.ValidationResultCacheDuration);
-		    
-            if (expiryClaim != null) {
-			    long epoch;
-			    if (long.TryParse(expiryClaim.Value, out epoch)) 
+            var expiryClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.Expiration);
+            var cacheExpirySetting = _clock.UtcNow.Add(_options.ValidationResultCacheDuration);
+
+            if (expiryClaim != null)
+            {
+                long epoch;
+                if (long.TryParse(expiryClaim.Value, out epoch))
                 {
-				    var tokenExpiresAt = epoch.ToDateTimeOffsetFromEpoch();
-				    
-                    if (tokenExpiresAt < cacheExpirySetting) 
+                    var tokenExpiresAt = epoch.ToDateTimeOffsetFromEpoch();
+
+                    if (tokenExpiresAt < cacheExpirySetting)
                     {
-			            _cache.Add(token, claims, tokenExpiresAt);
-			            return Task.FromResult<object>(null);
-				    }
-			    }
-		    }
-			
+                        _cache.Add(token, claims, tokenExpiresAt);
+                        return Task.FromResult<object>(null);
+                    }
+                }
+            }
+
             _cache.Add(token, claims, cacheExpirySetting);
 
             return Task.FromResult<object>(null);
