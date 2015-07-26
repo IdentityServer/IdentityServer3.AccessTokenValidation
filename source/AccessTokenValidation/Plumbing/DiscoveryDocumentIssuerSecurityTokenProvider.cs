@@ -38,7 +38,7 @@ namespace IdentityServer3.AccessTokenValidation
         private string _issuer;
         private IEnumerable<SecurityToken> _tokens;
 
-        public DiscoveryDocumentIssuerSecurityTokenProvider(string discoveryEndpoint, IdentityServerTokenAuthenticationOptions options, ILoggerFactory loggerFactory)
+        public DiscoveryDocumentIssuerSecurityTokenProvider(string discoveryEndpoint, IdentityServerBearerTokenAuthenticationOptions options, ILoggerFactory loggerFactory)
         {
             _logger = loggerFactory.Create("IdentityServer3.AccessTokenValidation.DiscoveryDocumentIssuerSecurityTokenProvider");
 

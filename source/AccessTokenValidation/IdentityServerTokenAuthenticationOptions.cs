@@ -26,12 +26,12 @@ namespace IdentityServer3.AccessTokenValidation
     /// <summary>
     /// Configures identity server token validation
     /// </summary>
-    public class IdentityServerTokenAuthenticationOptions : AuthenticationOptions
+    public class IdentityServerBearerTokenAuthenticationOptions : AuthenticationOptions
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="IdentityServerTokenAuthenticationOptions"/> class.
+        /// Initializes a new instance of the <see cref="IdentityServerBearerTokenAuthenticationOptions"/> class.
         /// </summary>
-        public IdentityServerTokenAuthenticationOptions() : base("Bearer")
+        public IdentityServerBearerTokenAuthenticationOptions() : base("Bearer")
         {
             NameClaimType = "name";
             RoleClaimType = "role";

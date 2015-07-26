@@ -31,10 +31,10 @@ namespace IdentityServer3.AccessTokenValidation
     {
         private readonly HttpClient _client;
         private readonly string _tokenValidationEndpoint;
-        private readonly IdentityServerTokenAuthenticationOptions _options;
+        private readonly IdentityServerBearerTokenAuthenticationOptions _options;
         private readonly ILogger _logger;
 
-        public ValidationEndpointTokenProvider(IdentityServerTokenAuthenticationOptions options, ILoggerFactory loggerFactory)
+        public ValidationEndpointTokenProvider(IdentityServerBearerTokenAuthenticationOptions options, ILoggerFactory loggerFactory)
         {
             _logger = loggerFactory.Create("ValidationEndpointTokenProvider");
 

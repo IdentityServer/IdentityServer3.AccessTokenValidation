@@ -27,7 +27,7 @@ namespace Owin
     /// <summary>
     /// AppBuilder extensions for identity server token validation
     /// </summary>
-    public static class IdentityServerTokenValidationAppBuilderExtensions
+    public static class IdentityServerBearerTokenValidationAppBuilderExtensions
     {
         /// <summary>
         /// Add identity server token authentication to the pipeline.
@@ -35,7 +35,7 @@ namespace Owin
         /// <param name="app">The application.</param>
         /// <param name="options">The options.</param>
         /// <returns></returns>
-        public static IAppBuilder UseIdentityServerTokenAuthentication(this IAppBuilder app, IdentityServerTokenAuthenticationOptions options)
+        public static IAppBuilder UseIdentityServerTokenAuthentication(this IAppBuilder app, IdentityServerBearerTokenAuthenticationOptions options)
         {
             if (app == null) throw new ArgumentNullException("app");
             if (options == null) throw new ArgumentNullException("options");
@@ -61,7 +61,7 @@ namespace Owin
                 middlewareOptions.TokenProvider = options.TokenProvider;
             }
 
-            app.Use<IdentityServerTokenValidationMiddleware>(middlewareOptions);
+            app.Use<IdentityServerBearerTokenValidationMiddleware>(middlewareOptions);
 
             if (options.RequiredScopes.Any())
             {
@@ -71,7 +71,7 @@ namespace Owin
             return app;
         }
 
-        private static OAuthBearerAuthenticationOptions ConfigureEndpointValidation(IdentityServerTokenAuthenticationOptions options, ILoggerFactory loggerFactory)
+        private static OAuthBearerAuthenticationOptions ConfigureEndpointValidation(IdentityServerBearerTokenAuthenticationOptions options, ILoggerFactory loggerFactory)
         {
             if (options.EnableValidationResultCache)
             {
@@ -92,7 +92,7 @@ namespace Owin
             return bearerOptions;
         }
 
-        internal static OAuthBearerAuthenticationOptions ConfigureLocalValidation(IdentityServerTokenAuthenticationOptions options, ILoggerFactory loggerFactory)
+        internal static OAuthBearerAuthenticationOptions ConfigureLocalValidation(IdentityServerBearerTokenAuthenticationOptions options, ILoggerFactory loggerFactory)
         {
             var discoveryEndpoint = options.Authority.EnsureTrailingSlash();
             discoveryEndpoint += ".well-known/openid-configuration";

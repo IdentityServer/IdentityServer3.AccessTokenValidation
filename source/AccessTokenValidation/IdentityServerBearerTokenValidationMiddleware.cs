@@ -26,14 +26,14 @@ using AppFunc = System.Func<System.Collections.Generic.IDictionary<string, objec
 
 namespace IdentityServer3.AccessTokenValidation
 {
-    public class IdentityServerTokenValidationMiddleware
+    public class IdentityServerBearerTokenValidationMiddleware
     {
         private readonly AppFunc _next;
         private readonly AppFunc _localValidationFunc;
         private readonly AppFunc _endpointValidationFunc;
         private IdentityServerOAuthBearerAuthenticationOptions _options;
 
-        public IdentityServerTokenValidationMiddleware(AppFunc next, IdentityServerOAuthBearerAuthenticationOptions options)
+        public IdentityServerBearerTokenValidationMiddleware(AppFunc next, IdentityServerOAuthBearerAuthenticationOptions options)
         {
             _next = next;
             _options = options;
