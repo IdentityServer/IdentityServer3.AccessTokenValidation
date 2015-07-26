@@ -26,6 +26,9 @@ using AppFunc = System.Func<System.Collections.Generic.IDictionary<string, objec
 
 namespace IdentityServer3.AccessTokenValidation
 {
+    /// <summary>
+    /// Middleware for validating identityserver access tokens
+    /// </summary>
     public class IdentityServerBearerTokenValidationMiddleware
     {
         private readonly AppFunc _next;
@@ -33,6 +36,11 @@ namespace IdentityServer3.AccessTokenValidation
         private readonly AppFunc _endpointValidationFunc;
         private IdentityServerOAuthBearerAuthenticationOptions _options;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IdentityServerBearerTokenValidationMiddleware"/> class.
+        /// </summary>
+        /// <param name="next">The next middleware.</param>
+        /// <param name="options">The options.</param>
         public IdentityServerBearerTokenValidationMiddleware(AppFunc next, IdentityServerOAuthBearerAuthenticationOptions options)
         {
             _next = next;
@@ -57,6 +65,11 @@ namespace IdentityServer3.AccessTokenValidation
             }
         }
 
+        /// <summary>
+        /// Invokes the middleware.
+        /// </summary>
+        /// <param name="environment">The environment.</param>
+        /// <returns></returns>
         public async Task Invoke(IDictionary<string, object> environment)
         {
             var context = new OwinContext(environment);

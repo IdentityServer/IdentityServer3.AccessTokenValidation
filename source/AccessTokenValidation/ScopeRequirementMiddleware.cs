@@ -23,17 +23,30 @@ using AppFunc = System.Func<System.Collections.Generic.IDictionary<string, objec
 
 namespace IdentityServer3.AccessTokenValidation
 {
+    /// <summary>
+    /// Middleware to check for scope claims in access token
+    /// </summary>
     public class ScopeRequirementMiddleware
     {
         private readonly AppFunc _next;
         private readonly IEnumerable<string> _scopes;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ScopeRequirementMiddleware"/> class.
+        /// </summary>
+        /// <param name="next">The next midleware.</param>
+        /// <param name="scopes">The scopes.</param>
         public ScopeRequirementMiddleware(AppFunc next, IEnumerable<string> scopes)
         {
             _next = next;
             _scopes = scopes;
         }
 
+        /// <summary>
+        /// Invokes the middleware.
+        /// </summary>
+        /// <param name="env">The OWIN environment.</param>
+        /// <returns></returns>
         public async Task Invoke(IDictionary<string, object> env)
         {
             var context = new OwinContext(env);

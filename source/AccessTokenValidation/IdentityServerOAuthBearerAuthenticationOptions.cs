@@ -18,11 +18,33 @@ using Microsoft.Owin.Security.OAuth;
 
 namespace IdentityServer3.AccessTokenValidation
 {
+    /// <summary>
+    /// Options that wraps OAuth2BearerAuthenticationOptions for local and remote token validation
+    /// </summary>
     public class IdentityServerOAuthBearerAuthenticationOptions
     {
+        /// <summary>
+        /// Gets or sets the token provider (set this if the access token is NOT on the authorization header using a Bearer scheme.
+        /// </summary>
+        /// <value>
+        /// The token provider.
+        /// </value>
         public IOAuthBearerAuthenticationProvider TokenProvider { get; set; }
 
+        /// <summary>
+        /// Gets or sets the local validation options.
+        /// </summary>
+        /// <value>
+        /// The local validation options.
+        /// </value>
         public OAuthBearerAuthenticationOptions LocalValidationOptions { get; set; }
+
+        /// <summary>
+        /// Gets or sets the endpoint validation options.
+        /// </summary>
+        /// <value>
+        /// The endpoint validation options.
+        /// </value>
         public OAuthBearerAuthenticationOptions EndpointValidationOptions { get; set; }
     }
 }
