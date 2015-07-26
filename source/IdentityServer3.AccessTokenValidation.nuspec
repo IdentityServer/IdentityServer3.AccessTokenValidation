@@ -21,9 +21,9 @@
 
     <dependencies>
       <dependency id="Owin" version="1.0"/>
-      <dependency id="Microsoft.Owin.Security.Jwt" version="3.0.1" />
+      <dependency id="Microsoft.Owin.Security.Jwt" version="3.0.0" />
       <dependency id="Microsoft.AspNet.WebApi.Client" version="5.2.3" />
-      <dependency id="Microsoft.IdentityModel.Protocol.Extensions" version="1.0.2.206221351" />
+      <dependency id="Microsoft.IdentityModel.Protocol.Extensions" version="1.0.0" />
     </dependencies>
   </metadata>
 </package>
