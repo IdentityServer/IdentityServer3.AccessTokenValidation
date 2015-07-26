@@ -45,13 +45,13 @@ namespace Owin
             var middlewareOptions = new IdentityServerOAuthBearerAuthenticationOptions();
 
             if (options.ValidationMode == ValidationMode.Both ||
-                options.ValidationMode == ValidationMode.LocalOnly)
+                options.ValidationMode == ValidationMode.Local)
             {
                 middlewareOptions.LocalValidationOptions = ConfigureLocalValidation(options, loggerFactory);
             }
             
             if (options.ValidationMode == ValidationMode.Both ||
-                options.ValidationMode == ValidationMode.ValidationEndpointOnly)
+                options.ValidationMode == ValidationMode.ValidationEndpoint)
             {
                 middlewareOptions.EndpointValidationOptions = ConfigureEndpointValidation(options, loggerFactory);
             }

@@ -29,11 +29,11 @@ namespace IdentityServer3.AccessTokenValidation
         /// <summary>
         /// Use local validation oly (only suitable for JWT tokens)
         /// </summary>
-        LocalOnly,
+        Local,
 
         /// <summary>
         /// Use the validation endpoint only (works for both JWT and reference tokens)
         /// </summary>
-        ValidationEndpointOnly
+        ValidationEndpoint
     }
 }
