@@ -35,7 +35,7 @@ namespace Owin
         /// <param name="app">The application.</param>
         /// <param name="options">The options.</param>
         /// <returns></returns>
-        public static IAppBuilder UseIdentityServerTokenAuthentication(this IAppBuilder app, IdentityServerBearerTokenAuthenticationOptions options)
+        public static IAppBuilder UseIdentityServerBearerTokenAuthentication(this IAppBuilder app, IdentityServerBearerTokenAuthenticationOptions options)
         {
             if (app == null) throw new ArgumentNullException("app");
             if (options == null) throw new ArgumentNullException("options");
