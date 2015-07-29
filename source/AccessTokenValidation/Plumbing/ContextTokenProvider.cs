@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using Microsoft.Owin.Security.OAuth;
 using System;
 using System.Threading.Tasks;
@@ -25,20 +26,6 @@ namespace IdentityServer3.AccessTokenValidation
     public class ContextTokenProvider : IOAuthBearerAuthenticationProvider
     {
         /// <summary>
-        /// Called each time a challenge is being sent to the client. By implementing this method the application
-        /// may modify the challenge as needed.
-        /// </summary>
-        /// <param name="context">Contains the default challenge.</param>
-        /// <returns>
-        /// A <see cref="T:System.Threading.Tasks.Task" /> representing the completed operation.
-        /// </returns>
-        /// <exception cref="System.NotImplementedException"></exception>
-        public Task ApplyChallenge(OAuthChallengeContext context)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
         /// Invoked before the <see cref="T:System.Security.Claims.ClaimsIdentity" /> is created. Gives the application an
         /// opportunity to find the identity from a different location, adjust, or reject the token.
         /// </summary>
@@ -49,6 +36,20 @@ namespace IdentityServer3.AccessTokenValidation
         public Task RequestToken(OAuthRequestTokenContext context)
         {
             context.Token = context.OwinContext.Get<string>("idsrv:tokenvalidation:token");
+            return Task.FromResult(0);
+        }
+
+        /// <summary>
+        /// Called each time a challenge is being sent to the client. By implementing this method the application
+        /// may modify the challenge as needed.
+        /// </summary>
+        /// <param name="context">Contains the default challenge.</param>
+        /// <returns>
+        /// A <see cref="T:System.Threading.Tasks.Task" /> representing the completed operation.
+        /// </returns>
+        /// <exception cref="System.NotImplementedException"></exception>
+        public Task ApplyChallenge(OAuthChallengeContext context)
+        {
             return Task.FromResult(0);
         }
 
