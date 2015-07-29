@@ -90,7 +90,7 @@ namespace IdentityServer3.AccessTokenValidation
             catch (Exception ex)
             {
                 _logger.WriteError("Exception while contacting token validation endpoint: " + ex.ToString());
-                throw;
+                return;
             }
 
             var jsonString = await response.Content.ReadAsStringAsync();
