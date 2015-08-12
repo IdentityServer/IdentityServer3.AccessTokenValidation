@@ -11,7 +11,7 @@ You can either validate the tokens locally (JWTs only) or use the IdentityServer
 ```csharp
 app.UseIdentityServerBearerTokenAuthentication(new IdentityServerBearerTokenAuthenticationOptions
     {
-        Authority = "https://identityserver.io"
+        Authority = "https://identity.identityserver.io"
     });
 ```
 
@@ -20,7 +20,7 @@ The middleware can also do the scope validation in one go.
 ```csharp
 app.UseIdentityServerBearerTokenAuthentication(new IdentityServerBearerTokenAuthenticationOptions
     {
-        Authority = "https://identityserver.io",
+        Authority = "https://identity.identityserver.io",
         RequiredScopes = new[] { "api1", "api2" }
     });
 ```

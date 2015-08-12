@@ -17,14 +17,14 @@
 using System;
 using System.Runtime.Caching;
 
-namespace Thinktecture.IdentityServer.AccessTokenValidation
+namespace IdentityServer3.AccessTokenValidation
 {
     /// <summary>
     /// Cache implementation using System.Runtime.Cachine.MemoryCache
     /// </summary>
 	public class Cache : ICache
 	{
-		const string CacheName = "thinktecture.validationCache";
+        const string CacheName = "IdentityServer3.validationCache";
 		readonly MemoryCache _cache = new MemoryCache(CacheName);
 
         /// <summary>

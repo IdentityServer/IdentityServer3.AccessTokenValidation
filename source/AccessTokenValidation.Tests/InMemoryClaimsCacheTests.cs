@@ -1,9 +1,9 @@
-﻿using Moq;
+﻿using IdentityModel;
+using IdentityServer3.AccessTokenValidation;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
-using Thinktecture.IdentityModel.Extensions;
-using Thinktecture.IdentityServer.AccessTokenValidation;
 using Xunit;
 
 namespace AccessTokenValidation.Tests

@@ -14,29 +14,30 @@
  * limitations under the License.
  */
 
-using System;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
-namespace Thinktecture.IdentityServer.AccessTokenValidation
+namespace IdentityServer3.AccessTokenValidation
 {
     /// <summary>
-    /// Abstraction for a cache
+    /// Interface for caching then token validation result
     /// </summary>
-	public interface ICache
-	{
+    public interface IValidationResultCache
+    {
         /// <summary>
-        /// Adds the specified key.
+        /// Add a validation result
         /// </summary>
-        /// <param name="key">The key.</param>
-        /// <param name="value">The value.</param>
-        /// <param name="absoluteExpiration">The absolute expiration.</param>
+        /// <param name="token">The token.</param>
+        /// <param name="claims">The claims.</param>
         /// <returns></returns>
-		bool Add(string key, object value, DateTimeOffset absoluteExpiration);
+        Task AddAsync(string token, IEnumerable<Claim> claims);
 
         /// <summary>
-        /// Gets the specified key.
+        /// Retrieves a validation result
         /// </summary>
-        /// <param name="key">The key.</param>
+        /// <param name="token">The token.</param>
         /// <returns></returns>
-        object Get(string key);
-	}
+        Task<IEnumerable<Claim>> GetAsync(string token);
+    }
 }

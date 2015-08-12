@@ -15,6 +15,7 @@
  */
 
 using Microsoft.IdentityModel.Protocols;
+using Microsoft.Owin.Logging;
 using Microsoft.Owin.Security.Jwt;
 using System;
 using System.Collections.Generic;
@@ -24,20 +25,23 @@ using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 
-namespace Thinktecture.IdentityServer.AccessTokenValidation
+namespace IdentityServer3.AccessTokenValidation
 {
-    internal class CachingDiscoveryIssuerSecurityTokenProvider : IIssuerSecurityTokenProvider
+    internal class DiscoveryDocumentIssuerSecurityTokenProvider : IIssuerSecurityTokenProvider
     {
         private readonly TimeSpan _refreshInterval = new TimeSpan(1, 0, 0, 0);
         private readonly ReaderWriterLockSlim _synclock = new ReaderWriterLockSlim();
         private readonly ConfigurationManager<OpenIdConnectConfiguration> _configurationManager;
-        
+        private readonly ILogger _logger;
+
         private DateTimeOffset _syncAfter = new DateTimeOffset(new DateTime(2001, 1, 1));
         private string _issuer;
         private IEnumerable<SecurityToken> _tokens;
 
-        public CachingDiscoveryIssuerSecurityTokenProvider(string discoveryEndpoint, IdentityServerBearerTokenAuthenticationOptions options)
+        public DiscoveryDocumentIssuerSecurityTokenProvider(string discoveryEndpoint, IdentityServerBearerTokenAuthenticationOptions options, ILoggerFactory loggerFactory)
         {
+            _logger = loggerFactory.Create("IdentityServer3.AccessTokenValidation.DiscoveryDocumentIssuerSecurityTokenProvider");
+
             var handler = options.BackchannelHttpHandler ?? new WebRequestHandler();
 
             if (options.BackchannelCertificateValidator != null)
@@ -133,12 +137,24 @@ namespace Thinktecture.IdentityServer.AccessTokenValidation
             try
             {
                 var result = AsyncHelper.RunSync(async () => await _configurationManager.GetConfigurationAsync());
+                
+                if (result.JsonWebKeySet == null)
+                {
+                    _logger.WriteError("Discovery document has no configured signing key. aborting.");
+                    throw new InvalidOperationException("Discovery document has no configured signing key. aborting.");
+                }
+
                 var tokens = from key in result.JsonWebKeySet.Keys
-                            select new X509SecurityToken(new X509Certificate2(Convert.FromBase64String(key.X5c.First())));
+                             select new X509SecurityToken(new X509Certificate2(Convert.FromBase64String(key.X5c.First())));
                 
                 _issuer = result.Issuer;
                 _tokens = tokens;
                 _syncAfter = DateTimeOffset.UtcNow + _refreshInterval;
+            }
+            catch (Exception ex) 
+            {
+                _logger.WriteError("Error contacting discovery endpoint: " + ex.ToString());
+                throw;
             }
             finally
             {

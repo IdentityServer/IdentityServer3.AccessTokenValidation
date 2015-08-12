@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+using Microsoft.Owin.Logging;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Infrastructure;
 using Newtonsoft.Json;
@@ -24,19 +25,22 @@ using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace Thinktecture.IdentityServer.AccessTokenValidation
+namespace IdentityServer3.AccessTokenValidation
 {
     internal class ValidationEndpointTokenProvider : AuthenticationTokenProvider
     {
         private readonly HttpClient _client;
         private readonly string _tokenValidationEndpoint;
         private readonly IdentityServerBearerTokenAuthenticationOptions _options;
+        private readonly ILogger _logger;
 
-        public ValidationEndpointTokenProvider(IdentityServerBearerTokenAuthenticationOptions options)
+        public ValidationEndpointTokenProvider(IdentityServerBearerTokenAuthenticationOptions options, ILoggerFactory loggerFactory)
         {
+            _logger = loggerFactory.Create("ValidationEndpointTokenProvider");
+
             var baseAddress = options.Authority.EnsureTrailingSlash();
             baseAddress += "connect/accesstokenvalidation";
-            _tokenValidationEndpoint = baseAddress + "?token={0}";
+            _tokenValidationEndpoint = baseAddress;
 
             var handler = options.BackchannelHttpHandler ?? new WebRequestHandler();
 
@@ -68,11 +72,24 @@ namespace Thinktecture.IdentityServer.AccessTokenValidation
                 }
             }
 
-            var url = string.Format(_tokenValidationEndpoint, context.Token);
-
-            var response = await _client.GetAsync(url);
-            if (response.StatusCode != HttpStatusCode.OK)
+            var form = new Dictionary<string, string>
             {
+                { "token", context.Token }
+            };
+
+            HttpResponseMessage response = null;
+            try
+            {
+                response = await _client.PostAsync(_tokenValidationEndpoint, new FormUrlEncodedContent(form));
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    _logger.WriteInformation("Error returned from token validation endpoint: " + response.ReasonPhrase);
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.WriteError("Exception while contacting token validation endpoint: " + ex.ToString());
                 return;
             }
 

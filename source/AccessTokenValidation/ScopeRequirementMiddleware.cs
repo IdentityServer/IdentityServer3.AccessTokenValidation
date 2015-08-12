@@ -19,20 +19,34 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AppFunc = System.Func<System.Collections.Generic.IDictionary<string, object>, System.Threading.Tasks.Task>;
 
-namespace Thinktecture.IdentityServer.AccessTokenValidation
+namespace IdentityServer3.AccessTokenValidation
 {
-    internal class ScopeRequirementMiddleware
+    /// <summary>
+    /// Middleware to check for scope claims in access token
+    /// </summary>
+    public class ScopeRequirementMiddleware
     {
-        private readonly Func<IDictionary<string, object>, Task> _next;
+        private readonly AppFunc _next;
         private readonly IEnumerable<string> _scopes;
 
-        public ScopeRequirementMiddleware(Func<IDictionary<string, object>, Task> next, params string[] scopes)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ScopeRequirementMiddleware"/> class.
+        /// </summary>
+        /// <param name="next">The next midleware.</param>
+        /// <param name="scopes">The scopes.</param>
+        public ScopeRequirementMiddleware(AppFunc next, IEnumerable<string> scopes)
         {
             _next = next;
             _scopes = scopes;
         }
 
+        /// <summary>
+        /// Invokes the middleware.
+        /// </summary>
+        /// <param name="env">The OWIN environment.</param>
+        /// <returns></returns>
         public async Task Invoke(IDictionary<string, object> env)
         {
             var context = new OwinContext(env);
@@ -90,7 +104,7 @@ namespace Thinktecture.IdentityServer.AccessTokenValidation
 
             foreach (var scope in scopeClaims)
             {
-                if (_scopes.Contains(scope.Value))
+                if (_scopes.Contains(scope.Value, StringComparer.Ordinal))
                 {
                     return true;
                 }

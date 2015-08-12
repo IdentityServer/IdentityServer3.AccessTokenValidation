@@ -16,19 +16,27 @@
 
 using System;
 
-namespace Thinktecture.IdentityServer.AccessTokenValidation
+namespace IdentityServer3.AccessTokenValidation
 {
     /// <summary>
-    /// Interface to abstract the clock
+    /// Abstraction for a cache
     /// </summary>
-	public interface IClock
+	public interface ICache
 	{
         /// <summary>
-        /// Gets the UTC now.
+        /// Adds the specified key.
         /// </summary>
-        /// <value>
-        /// The UTC now.
-        /// </value>
-		DateTimeOffset UtcNow { get; }
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="absoluteExpiration">The absolute expiration.</param>
+        /// <returns></returns>
+		bool Add(string key, object value, DateTimeOffset absoluteExpiration);
+
+        /// <summary>
+        /// Gets the specified key.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns></returns>
+        object Get(string key);
 	}
 }

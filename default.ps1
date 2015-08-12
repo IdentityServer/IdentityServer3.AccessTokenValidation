@@ -3,7 +3,7 @@ properties {
 	$src_directory = "$base_directory\source"
 	$output_directory = "$base_directory\build"
 	$dist_directory = "$base_directory\distribution"
-	$sln_file = "$src_directory\Thinktecture.IdentityServer3.AccessTokenValidation.sln"
+	$sln_file = "$src_directory\IdentityServer3.AccessTokenValidation.sln"
 	$target_config = "Release"
 	$framework_version = "v4.5"
 	$xunit_path = "$src_directory\packages\xunit.runners.1.9.2\tools\xunit.console.clr4.exe"
@@ -11,7 +11,7 @@ properties {
 	$nuget_path = "$src_directory\.nuget\nuget.exe"
 	
 	$buildNumber = 0;
-	$version = "1.2.3.0"
+	$version = "2.0.0.0"
 	$preRelease = $null
 }
 
@@ -53,19 +53,19 @@ task UpdateVersion {
 }
 
 task ILMerge -depends Compile {
-	$input_dlls = "$output_directory\Thinktecture.IdentityServer.v3.AccessTokenValidation.dll"
+	$input_dlls = "$output_directory\IdentityServer.v3.AccessTokenValidation.dll"
 
 	Get-ChildItem -Path $output_directory -Filter *.dll |
 		foreach-object {
-			# Exclude Thinktecture.IdentityServer.Core.dll as that will be the primary assembly
-			if ("$_" -ne "Thinktecture.IdentityServer.v3.AccessTokenValidation.dll" -and 
+			# Exclude IdentityServer3.AccessTokenValidation.dll as that will be the primary assembly
+			if ("$_" -ne "IdentityServer3.AccessTokenValidation.dll" -and 
 			    "$_" -ne "Owin.dll") {
 				$input_dlls = "$input_dlls $output_directory\$_"
 			}
 	}
 
 	New-Item $dist_directory\lib\net45 -Type Directory
-	Invoke-Expression "$ilmerge_path /targetplatform:v4 /internalize:ilmerge.exclude /allowDup /target:library /out:$dist_directory\lib\net45\Thinktecture.IdentityServer.v3.AccessTokenValidation.dll $input_dlls"
+	Invoke-Expression "$ilmerge_path /targetplatform:v4 /internalize:ilmerge.exclude /allowDup /target:library /out:$dist_directory\lib\net45\IdentityServer.v3.AccessTokenValidation.dll $input_dlls"
 }
 
 task CreateNuGetPackage -depends Compile {
@@ -87,8 +87,8 @@ task CreateNuGetPackage -depends Compile {
 	}
 	
 	New-Item $dist_directory\lib\net45 -Type Directory
-	copy-item $output_directory\Thinktecture.IdentityServer3.AccessTokenValidation.* $dist_directory\lib\net45
+	copy-item $output_directory\IdentityServer3.AccessTokenValidation.* $dist_directory\lib\net45
 
-	copy-item $src_directory\Thinktecture.IdentityServer3.AccessTokenValidation.nuspec $dist_directory
-	exec { . $nuget_path pack $dist_directory\Thinktecture.IdentityServer3.AccessTokenValidation.nuspec -BasePath $dist_directory -o $dist_directory -version $packageVersion }
+	copy-item $src_directory\IdentityServer3.AccessTokenValidation.nuspec $dist_directory
+	exec { . $nuget_path pack $dist_directory\IdentityServer3.AccessTokenValidation.nuspec -BasePath $dist_directory -o $dist_directory -version $packageVersion }
 }

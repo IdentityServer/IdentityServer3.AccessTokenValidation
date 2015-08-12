@@ -14,18 +14,21 @@
  * limitations under the License.
  */
 
-namespace Thinktecture.IdentityServer.AccessTokenValidation
-{
-    internal static class StringExtensions
-    {
-        public static string EnsureTrailingSlash(this string input)
-        {
-            if (!input.EndsWith("/"))
-            {
-                return input + "/";
-            }
+using System;
 
-            return input;
-        }
-    }
+namespace IdentityServer3.AccessTokenValidation
+{
+    /// <summary>
+    /// Interface to abstract the clock
+    /// </summary>
+	public interface IClock
+	{
+        /// <summary>
+        /// Gets the UTC now.
+        /// </summary>
+        /// <value>
+        /// The UTC now.
+        /// </value>
+		DateTimeOffset UtcNow { get; }
+	}
 }
