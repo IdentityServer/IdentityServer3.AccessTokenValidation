@@ -21,6 +21,7 @@ using Owin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AppFunc = System.Func<System.Collections.Generic.IDictionary<string, object>, System.Threading.Tasks.Task>;
 
@@ -111,6 +112,11 @@ namespace IdentityServer3.AccessTokenValidation
                 }
             }
 
+            if (_options.PreserveAccessToken)
+            {
+                PreserveAccessToken(context, token);
+            }
+
             await _next(environment);
         }
 
@@ -143,6 +149,16 @@ namespace IdentityServer3.AccessTokenValidation
             }
 
             return requestToken;
+        }
+
+        private void PreserveAccessToken(OwinContext context, string token)
+        {
+            if (context.Authentication.User != null && 
+                context.Authentication.User.Identity != null &&
+                context.Authentication.User.Identity.IsAuthenticated)
+            {
+                context.Authentication.User.Identities.First().AddClaim(new Claim("token", token));
+            }
         }
     }
 }
