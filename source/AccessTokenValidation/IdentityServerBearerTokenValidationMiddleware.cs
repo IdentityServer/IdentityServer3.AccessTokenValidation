@@ -85,7 +85,6 @@ namespace IdentityServer3.AccessTokenValidation
 
             context.Set("idsrv:tokenvalidation:token", token);
 
-
             // seems to be a JWT
             if (token.Contains('.'))
             {
@@ -99,6 +98,7 @@ namespace IdentityServer3.AccessTokenValidation
                 if (_endpointValidationFunc != null)
                 {
                     await _endpointValidationFunc(environment);
+                    PreserveAccessToken(context, token);
                     return;
                 }
             }
@@ -108,13 +108,9 @@ namespace IdentityServer3.AccessTokenValidation
                 if (_endpointValidationFunc != null)
                 {
                     await _endpointValidationFunc(environment);
+                    PreserveAccessToken(context, token);
                     return;
                 }
-            }
-
-            if (_options.PreserveAccessToken)
-            {
-                PreserveAccessToken(context, token);
             }
 
             await _next(environment);
@@ -153,11 +149,14 @@ namespace IdentityServer3.AccessTokenValidation
 
         private void PreserveAccessToken(OwinContext context, string token)
         {
-            if (context.Authentication.User != null && 
-                context.Authentication.User.Identity != null &&
-                context.Authentication.User.Identity.IsAuthenticated)
+            if (_options.PreserveAccessToken)
             {
-                context.Authentication.User.Identities.First().AddClaim(new Claim("token", token));
+                if (context.Authentication.User != null &&
+                    context.Authentication.User.Identity != null &&
+                    context.Authentication.User.Identity.IsAuthenticated)
+                {
+                    context.Authentication.User.Identities.First().AddClaim(new Claim("token", token));
+                }
             }
         }
     }
