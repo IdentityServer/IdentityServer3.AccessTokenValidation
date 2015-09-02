@@ -98,7 +98,6 @@ namespace IdentityServer3.AccessTokenValidation
                 if (_endpointValidationFunc != null)
                 {
                     await _endpointValidationFunc(environment);
-                    PreserveAccessToken(context, token);
                     return;
                 }
             }
@@ -108,7 +107,6 @@ namespace IdentityServer3.AccessTokenValidation
                 if (_endpointValidationFunc != null)
                 {
                     await _endpointValidationFunc(environment);
-                    PreserveAccessToken(context, token);
                     return;
                 }
             }
@@ -145,19 +143,6 @@ namespace IdentityServer3.AccessTokenValidation
             }
 
             return requestToken;
-        }
-
-        private void PreserveAccessToken(OwinContext context, string token)
-        {
-            if (_options.PreserveAccessToken)
-            {
-                if (context.Authentication.User != null &&
-                    context.Authentication.User.Identity != null &&
-                    context.Authentication.User.Identity.IsAuthenticated)
-                {
-                    context.Authentication.User.Identities.First().AddClaim(new Claim("token", token));
-                }
-            }
         }
     }
 }

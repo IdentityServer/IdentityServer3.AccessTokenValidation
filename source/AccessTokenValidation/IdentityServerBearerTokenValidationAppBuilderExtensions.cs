@@ -61,12 +61,16 @@ namespace Owin
                 middlewareOptions.TokenProvider = options.TokenProvider;
             }
 
-            middlewareOptions.PreserveAccessToken = options.PreserveAccessToken;
             app.Use<IdentityServerBearerTokenValidationMiddleware>(middlewareOptions);
 
             if (options.RequiredScopes.Any())
             {
                 app.Use<ScopeRequirementMiddleware>(options.RequiredScopes);
+            }
+
+            if (options.PreserveAccessToken)
+            {
+                app.Use<PreserveAccessTokenMiddleware>();
             }
 
             return app;
