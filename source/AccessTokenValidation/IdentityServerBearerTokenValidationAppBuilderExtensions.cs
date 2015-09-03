@@ -68,6 +68,11 @@ namespace Owin
                 app.Use<ScopeRequirementMiddleware>(options.RequiredScopes);
             }
 
+            if (options.PreserveAccessToken)
+            {
+                app.Use<PreserveAccessTokenMiddleware>();
+            }
+
             return app;
         }
 
