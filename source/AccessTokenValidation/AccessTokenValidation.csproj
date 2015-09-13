@@ -81,7 +81,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IdentityServerOAuthBearerAuthenticationOptions.cs" />
+    <Compile Include="Plumbing\IdentityServerOAuthBearerAuthenticationOptions.cs" />
     <Compile Include="IdentityServerBearerTokenAuthenticationOptions.cs" />
     <Compile Include="IdentityServerBearerTokenValidationAppBuilderExtensions.cs" />
     <Compile Include="IdentityServerBearerTokenValidationMiddleware.cs" />

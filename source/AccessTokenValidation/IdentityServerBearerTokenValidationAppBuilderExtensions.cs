@@ -99,22 +99,53 @@ namespace Owin
 
         internal static OAuthBearerAuthenticationOptions ConfigureLocalValidation(IdentityServerBearerTokenAuthenticationOptions options, ILoggerFactory loggerFactory)
         {
-            var discoveryEndpoint = options.Authority.EnsureTrailingSlash();
-            discoveryEndpoint += ".well-known/openid-configuration";
+            JwtFormat tokenFormat = null;
 
-            var issuerProvider = new DiscoveryDocumentIssuerSecurityTokenProvider(
-                discoveryEndpoint,
-                options,
-                loggerFactory);
-
-            var valParams = new TokenValidationParameters
+            // use static configuration
+            if (!string.IsNullOrWhiteSpace(options.IssuerName) &&
+                options.SigningCertificate != null)
             {
-                ValidAudience = issuerProvider.Audience,
-                NameClaimType = options.NameClaimType,
-                RoleClaimType = options.RoleClaimType
-            };
+                var audience = options.IssuerName.EnsureTrailingSlash();
+                audience += "resources";
 
-            var tokenFormat = new JwtFormat(valParams, issuerProvider);
+                var valParams = new TokenValidationParameters
+                {
+                    ValidIssuer = options.IssuerName,
+                    ValidAudience = audience,
+                    IssuerSigningToken = new X509SecurityToken(options.SigningCertificate),
+
+                    NameClaimType = options.NameClaimType,
+                    RoleClaimType = options.RoleClaimType,
+                };
+
+                tokenFormat = new JwtFormat(valParams);
+            }
+            else
+            {
+                // use discovery endpoint
+                if (string.IsNullOrWhiteSpace(options.Authority))
+                {
+                    throw new Exception("Either set IssuerName and SigningCertificate - or Authority");
+                }
+
+                var discoveryEndpoint = options.Authority.EnsureTrailingSlash();
+                discoveryEndpoint += ".well-known/openid-configuration";
+
+                var issuerProvider = new DiscoveryDocumentIssuerSecurityTokenProvider(
+                    discoveryEndpoint,
+                    options,
+                    loggerFactory);
+
+                var valParams = new TokenValidationParameters
+                {
+                    ValidAudience = issuerProvider.Audience,
+                    NameClaimType = options.NameClaimType,
+                    RoleClaimType = options.RoleClaimType
+                };
+
+                tokenFormat = new JwtFormat(valParams, issuerProvider);
+            }
+            
 
             var bearerOptions = new OAuthBearerAuthenticationOptions
             {
