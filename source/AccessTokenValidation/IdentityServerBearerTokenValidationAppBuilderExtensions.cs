@@ -39,7 +39,6 @@ namespace Owin
         {
             if (app == null) throw new ArgumentNullException("app");
             if (options == null) throw new ArgumentNullException("options");
-            if (string.IsNullOrEmpty(options.Authority)) throw new ArgumentException("Authority must be set", "authority");
 
             var loggerFactory = app.GetLoggerFactory();
             var middlewareOptions = new IdentityServerOAuthBearerAuthenticationOptions();
