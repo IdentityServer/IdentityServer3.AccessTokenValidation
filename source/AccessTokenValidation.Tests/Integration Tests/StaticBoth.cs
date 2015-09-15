@@ -10,14 +10,15 @@ using Xunit;
 
 namespace AccessTokenValidation.Tests.Integration_Tests
 {
-    public class StaticLocal
+    public class StaticBoth
     {
         IdentityServerBearerTokenAuthenticationOptions _options = new IdentityServerBearerTokenAuthenticationOptions
         {
             IssuerName = TokenFactory.DefaultIssuer,
             SigningCertificate = new X509Certificate2(Convert.FromBase64String(TokenFactory.DefaultPublicKey)),
+            Authority = "https://notused",
 
-            ValidationMode = ValidationMode.Local
+            ValidationMode = ValidationMode.Both
         };
 
         [Fact]
@@ -30,7 +31,7 @@ namespace AccessTokenValidation.Tests.Integration_Tests
         }
 
         [Fact]
-        public async Task Invalid_Token_Sent()
+        public async Task JWT_Invalid_Token_Sent()
         {
             var client = PipelineFactory.CreateHttpClient(_options);
             client.SetBearerToken("in.valid");
@@ -40,7 +41,7 @@ namespace AccessTokenValidation.Tests.Integration_Tests
         }
 
         [Fact]
-        public async Task Token_Sent_No_Scope_No_ScopeRequirements()
+        public async Task JWT_Sent_No_Scope_No_ScopeRequirements()
         {
             var client = PipelineFactory.CreateHttpClient(_options);
             var token = TokenFactory.CreateTokenString(TokenFactory.CreateToken());
@@ -52,7 +53,7 @@ namespace AccessTokenValidation.Tests.Integration_Tests
         }
 
         [Fact]
-        public async Task Token_Sent_No_Scope_Api1_ScopeRequirements()
+        public async Task JWT_Sent_No_Scope_Api1_ScopeRequirements()
         {
             _options.RequiredScopes = new[] { TokenFactory.Api1Scope };
 
@@ -66,7 +67,7 @@ namespace AccessTokenValidation.Tests.Integration_Tests
         }
 
         [Fact]
-        public async Task Token_Sent_Api1_Scope_Api1_ScopeRequirements()
+        public async Task JWT_Sent_Api1_Scope_Api1_ScopeRequirements()
         {
             _options.RequiredScopes = new[] { TokenFactory.Api1Scope };
 
@@ -75,6 +76,57 @@ namespace AccessTokenValidation.Tests.Integration_Tests
                 TokenFactory.CreateToken(scope: new[] { TokenFactory.Api1Scope }));
 
             client.SetBearerToken(token);
+
+            var result = await client.GetAsync("http://test");
+            result.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
+
+        [Fact]
+        public async Task Reference_Invalid_Token_Sent()
+        {
+            _options.BackchannelHttpHandler = new FailureValidationEndointHandler();
+
+            var client = PipelineFactory.CreateHttpClient(_options);
+            client.SetBearerToken("invalid");
+
+            var result = await client.GetAsync("http://test");
+            result.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        }
+
+        [Fact]
+        public async Task Reference_Sent_No_Scope_No_ScopeRequirements()
+        {
+            _options.BackchannelHttpHandler = new SuccessValidationEndointHandler();
+
+            var client = PipelineFactory.CreateHttpClient(_options);
+            client.SetBearerToken("reference");
+
+            var result = await client.GetAsync("http://test");
+            result.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
+
+        [Fact]
+        public async Task Reference_Sent_No_Scope_Api1_ScopeRequirements()
+        {
+            _options.RequiredScopes = new[] { TokenFactory.Api1Scope };
+            _options.BackchannelHttpHandler = new SuccessValidationEndointHandler();
+
+            var client = PipelineFactory.CreateHttpClient(_options);
+            client.SetBearerToken("reference");
+
+            var result = await client.GetAsync("http://test");
+            result.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        }
+
+        [Fact]
+        public async Task Reference_Sent_Api1_Scope_Api1_ScopeRequirements()
+        {
+            _options.RequiredScopes = new[] { TokenFactory.Api1Scope };
+            _options.BackchannelHttpHandler = new SuccessValidationEndointHandler(
+                new[] { Tuple.Create<object, object>("scope", TokenFactory.Api1Scope) });
+
+            var client = PipelineFactory.CreateHttpClient(_options);
+            client.SetBearerToken("reference");
 
             var result = await client.GetAsync("http://test");
             result.StatusCode.Should().Be(HttpStatusCode.OK);

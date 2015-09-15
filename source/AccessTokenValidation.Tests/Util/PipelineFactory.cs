@@ -1,11 +1,8 @@
 ﻿using IdentityServer3.AccessTokenValidation;
 using Microsoft.Owin.Builder;
+using Microsoft.Owin.Logging;
 using Owin;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AccessTokenValidation.Tests.Util
@@ -15,6 +12,7 @@ namespace AccessTokenValidation.Tests.Util
         public static IAppBuilder Create(IdentityServerBearerTokenAuthenticationOptions options)
         {
             IAppBuilder app = new AppBuilder();
+            app.SetLoggerFactory(new DiagnosticsLoggerFactory());
 
             app.UseIdentityServerBearerTokenAuthentication(options);
             
