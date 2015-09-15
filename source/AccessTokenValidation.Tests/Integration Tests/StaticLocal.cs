@@ -66,9 +66,53 @@ namespace AccessTokenValidation.Tests.Integration_Tests
         }
 
         [Fact]
+        public async Task Token_Sent_No_Scope_Api1_Api2_ScopeRequirements()
+        {
+            _options.RequiredScopes = new[] { TokenFactory.Api1Scope, TokenFactory.Api2Scope };
+
+            var client = PipelineFactory.CreateHttpClient(_options);
+            var token = TokenFactory.CreateTokenString(TokenFactory.CreateToken());
+
+            client.SetBearerToken(token);
+
+            var result = await client.GetAsync("http://test");
+            result.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        }
+
+        [Fact]
         public async Task Token_Sent_Api1_Scope_Api1_ScopeRequirements()
         {
             _options.RequiredScopes = new[] { TokenFactory.Api1Scope };
+
+            var client = PipelineFactory.CreateHttpClient(_options);
+            var token = TokenFactory.CreateTokenString(
+                TokenFactory.CreateToken(scope: new[] { TokenFactory.Api1Scope }));
+
+            client.SetBearerToken(token);
+
+            var result = await client.GetAsync("http://test");
+            result.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
+
+        [Fact]
+        public async Task Token_Sent_Api2_Scope_Api1_ScopeRequirements()
+        {
+            _options.RequiredScopes = new[] { TokenFactory.Api1Scope };
+
+            var client = PipelineFactory.CreateHttpClient(_options);
+            var token = TokenFactory.CreateTokenString(
+                TokenFactory.CreateToken(scope: new[] { TokenFactory.Api2Scope }));
+
+            client.SetBearerToken(token);
+
+            var result = await client.GetAsync("http://test");
+            result.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        }
+
+        [Fact]
+        public async Task Token_Sent_Api1_Scope_Api1_Api2_ScopeRequirements()
+        {
+            _options.RequiredScopes = new[] { TokenFactory.Api1Scope, TokenFactory.Api2Scope };
 
             var client = PipelineFactory.CreateHttpClient(_options);
             var token = TokenFactory.CreateTokenString(
