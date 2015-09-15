@@ -43,16 +43,20 @@ namespace Owin
             var loggerFactory = app.GetLoggerFactory();
             var middlewareOptions = new IdentityServerOAuthBearerAuthenticationOptions();
 
-            if (options.ValidationMode == ValidationMode.Both ||
-                options.ValidationMode == ValidationMode.Local)
+            switch (options.ValidationMode)
             {
-                middlewareOptions.LocalValidationOptions = ConfigureLocalValidation(options, loggerFactory);
-            }
-            
-            if (options.ValidationMode == ValidationMode.Both ||
-                options.ValidationMode == ValidationMode.ValidationEndpoint)
-            {
-                middlewareOptions.EndpointValidationOptions = ConfigureEndpointValidation(options, loggerFactory);
+                case ValidationMode.Local:
+                    middlewareOptions.LocalValidationOptions = ConfigureLocalValidation(options, loggerFactory);
+                    break;
+                case ValidationMode.ValidationEndpoint:
+                    middlewareOptions.EndpointValidationOptions = ConfigureEndpointValidation(options, loggerFactory);
+                    break;
+                case ValidationMode.Both:
+                    middlewareOptions.LocalValidationOptions = ConfigureLocalValidation(options, loggerFactory);
+                    middlewareOptions.EndpointValidationOptions = ConfigureEndpointValidation(options, loggerFactory);
+                    break;
+                default:
+                    throw new Exception("ValidationMode has invalid value");
             }
 
             if (options.TokenProvider != null)
@@ -108,7 +112,7 @@ namespace Owin
                 audience += "resources";
 
                 var valParams = new TokenValidationParameters
-                {
+                { 
                     ValidIssuer = options.IssuerName,
                     ValidAudience = audience,
                     IssuerSigningToken = new X509SecurityToken(options.SigningCertificate),
