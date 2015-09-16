@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IdentityModel;
+using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens;
 using System.Linq;
@@ -51,13 +52,18 @@ namespace AccessTokenValidation.Tests.Util
                 scope.ToList().ForEach(s => additionalClaims.Add(new Claim("scope", s)));
             }
 
+            var credential = new X509SigningCredentials(signingCertificate ?? DefaultSigningCertificate);
+
             var token = new JwtSecurityToken(
                 issuer ?? DefaultIssuer,
                 audience ?? DefaultAudience,
                 additionalClaims,
                 DateTime.UtcNow,
                 DateTime.UtcNow.AddSeconds(ttl),
-                new X509SigningCredentials(signingCertificate ?? DefaultSigningCertificate));
+                credential);
+
+            token.Header.Add(
+                "kid", Base64Url.Encode(credential.Certificate.GetCertHash()));
 
             return token;
         }
