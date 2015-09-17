@@ -36,7 +36,7 @@ namespace IdentityServer3.AccessTokenValidation
 
         public ValidationEndpointTokenProvider(IdentityServerBearerTokenAuthenticationOptions options, ILoggerFactory loggerFactory)
         {
-            _logger = loggerFactory.Create("ValidationEndpointTokenProvider");
+            _logger = loggerFactory.Create(this.GetType().FullName);
 
             if (string.IsNullOrWhiteSpace(options.Authority))
             {

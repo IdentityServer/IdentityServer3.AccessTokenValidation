@@ -1,10 +1,8 @@
 ﻿using AccessTokenValidation.Tests.Util;
 using FluentAssertions;
 using IdentityServer3.AccessTokenValidation;
-using System;
 using System.Net;
 using System.Net.Http;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Xunit;
 

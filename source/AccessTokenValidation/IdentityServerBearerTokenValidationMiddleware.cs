@@ -22,7 +22,6 @@ using Owin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using AppFunc = System.Func<System.Collections.Generic.IDictionary<string, object>, System.Threading.Tasks.Task>;
 
@@ -40,15 +39,16 @@ namespace IdentityServer3.AccessTokenValidation
         private readonly ILogger _logger;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="IdentityServerBearerTokenValidationMiddleware"/> class.
+        /// Initializes a new instance of the <see cref="IdentityServerBearerTokenValidationMiddleware" /> class.
         /// </summary>
         /// <param name="next">The next middleware.</param>
         /// <param name="options">The options.</param>
-        public IdentityServerBearerTokenValidationMiddleware(AppFunc next, IdentityServerOAuthBearerAuthenticationOptions options, ILoggerFactory loggerfactory)
+        /// <param name="loggerFactory">The logger factory.</param>
+        public IdentityServerBearerTokenValidationMiddleware(AppFunc next, IdentityServerOAuthBearerAuthenticationOptions options, ILoggerFactory loggerFactory)
         {
             _next = next;
             _options = options;
-            _logger = loggerfactory.Create(this.GetType().Name);
+            _logger = loggerFactory.Create(this.GetType().FullName);
 
             if (options.LocalValidationOptions != null)
             {

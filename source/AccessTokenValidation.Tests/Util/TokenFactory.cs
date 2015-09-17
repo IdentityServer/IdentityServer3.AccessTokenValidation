@@ -23,14 +23,12 @@ namespace AccessTokenValidation.Tests.Util
         {
             get
             {
-                if (signingCert != null)
+                if (signingCert == null)
                 {
-                    return signingCert;
+                    signingCert = Cert.Load();
                 }
-                else
-                {
-                    return Cert.Load();
-                }
+
+                return signingCert;
             }
         }
 
