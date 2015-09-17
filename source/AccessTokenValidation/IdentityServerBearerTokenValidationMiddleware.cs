@@ -16,12 +16,12 @@
 
 using Microsoft.Owin;
 using Microsoft.Owin.Builder;
+using Microsoft.Owin.Logging;
 using Microsoft.Owin.Security.OAuth;
 using Owin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using AppFunc = System.Func<System.Collections.Generic.IDictionary<string, object>, System.Threading.Tasks.Task>;
 
@@ -35,17 +35,20 @@ namespace IdentityServer3.AccessTokenValidation
         private readonly AppFunc _next;
         private readonly AppFunc _localValidationFunc;
         private readonly AppFunc _endpointValidationFunc;
-        private IdentityServerOAuthBearerAuthenticationOptions _options;
+        private readonly IdentityServerOAuthBearerAuthenticationOptions _options;
+        private readonly ILogger _logger;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="IdentityServerBearerTokenValidationMiddleware"/> class.
+        /// Initializes a new instance of the <see cref="IdentityServerBearerTokenValidationMiddleware" /> class.
         /// </summary>
         /// <param name="next">The next middleware.</param>
         /// <param name="options">The options.</param>
-        public IdentityServerBearerTokenValidationMiddleware(AppFunc next, IdentityServerOAuthBearerAuthenticationOptions options)
+        /// <param name="loggerFactory">The logger factory.</param>
+        public IdentityServerBearerTokenValidationMiddleware(AppFunc next, IdentityServerOAuthBearerAuthenticationOptions options, ILoggerFactory loggerFactory)
         {
             _next = next;
             _options = options;
+            _logger = loggerFactory.Create(this.GetType().FullName);
 
             if (options.LocalValidationOptions != null)
             {
@@ -100,6 +103,8 @@ namespace IdentityServer3.AccessTokenValidation
                     await _endpointValidationFunc(environment);
                     return;
                 }
+
+                _logger.WriteWarning("No validator configured for JWT token");
             }
             else
             {
@@ -109,6 +114,8 @@ namespace IdentityServer3.AccessTokenValidation
                     await _endpointValidationFunc(environment);
                     return;
                 }
+
+                _logger.WriteWarning("No validator configured for reference token");
             }
 
             await _next(environment);

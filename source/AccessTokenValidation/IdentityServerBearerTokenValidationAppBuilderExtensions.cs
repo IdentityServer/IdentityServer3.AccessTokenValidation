@@ -39,21 +39,24 @@ namespace Owin
         {
             if (app == null) throw new ArgumentNullException("app");
             if (options == null) throw new ArgumentNullException("options");
-            if (string.IsNullOrEmpty(options.Authority)) throw new ArgumentException("Authority must be set", "authority");
 
             var loggerFactory = app.GetLoggerFactory();
             var middlewareOptions = new IdentityServerOAuthBearerAuthenticationOptions();
 
-            if (options.ValidationMode == ValidationMode.Both ||
-                options.ValidationMode == ValidationMode.Local)
+            switch (options.ValidationMode)
             {
-                middlewareOptions.LocalValidationOptions = ConfigureLocalValidation(options, loggerFactory);
-            }
-            
-            if (options.ValidationMode == ValidationMode.Both ||
-                options.ValidationMode == ValidationMode.ValidationEndpoint)
-            {
-                middlewareOptions.EndpointValidationOptions = ConfigureEndpointValidation(options, loggerFactory);
+                case ValidationMode.Local:
+                    middlewareOptions.LocalValidationOptions = ConfigureLocalValidation(options, loggerFactory);
+                    break;
+                case ValidationMode.ValidationEndpoint:
+                    middlewareOptions.EndpointValidationOptions = ConfigureEndpointValidation(options, loggerFactory);
+                    break;
+                case ValidationMode.Both:
+                    middlewareOptions.LocalValidationOptions = ConfigureLocalValidation(options, loggerFactory);
+                    middlewareOptions.EndpointValidationOptions = ConfigureEndpointValidation(options, loggerFactory);
+                    break;
+                default:
+                    throw new Exception("ValidationMode has invalid value");
             }
 
             if (options.TokenProvider != null)
@@ -61,7 +64,7 @@ namespace Owin
                 middlewareOptions.TokenProvider = options.TokenProvider;
             }
 
-            app.Use<IdentityServerBearerTokenValidationMiddleware>(middlewareOptions);
+            app.Use<IdentityServerBearerTokenValidationMiddleware>(middlewareOptions, loggerFactory);
 
             if (options.RequiredScopes.Any())
             {
@@ -99,22 +102,53 @@ namespace Owin
 
         internal static OAuthBearerAuthenticationOptions ConfigureLocalValidation(IdentityServerBearerTokenAuthenticationOptions options, ILoggerFactory loggerFactory)
         {
-            var discoveryEndpoint = options.Authority.EnsureTrailingSlash();
-            discoveryEndpoint += ".well-known/openid-configuration";
+            JwtFormat tokenFormat = null;
 
-            var issuerProvider = new DiscoveryDocumentIssuerSecurityTokenProvider(
-                discoveryEndpoint,
-                options,
-                loggerFactory);
-
-            var valParams = new TokenValidationParameters
+            // use static configuration
+            if (!string.IsNullOrWhiteSpace(options.IssuerName) &&
+                options.SigningCertificate != null)
             {
-                ValidAudience = issuerProvider.Audience,
-                NameClaimType = options.NameClaimType,
-                RoleClaimType = options.RoleClaimType
-            };
+                var audience = options.IssuerName.EnsureTrailingSlash();
+                audience += "resources";
 
-            var tokenFormat = new JwtFormat(valParams, issuerProvider);
+                var valParams = new TokenValidationParameters
+                { 
+                    ValidIssuer = options.IssuerName,
+                    ValidAudience = audience,
+                    IssuerSigningToken = new X509SecurityToken(options.SigningCertificate),
+
+                    NameClaimType = options.NameClaimType,
+                    RoleClaimType = options.RoleClaimType,
+                };
+
+                tokenFormat = new JwtFormat(valParams);
+            }
+            else
+            {
+                // use discovery endpoint
+                if (string.IsNullOrWhiteSpace(options.Authority))
+                {
+                    throw new Exception("Either set IssuerName and SigningCertificate - or Authority");
+                }
+
+                var discoveryEndpoint = options.Authority.EnsureTrailingSlash();
+                discoveryEndpoint += ".well-known/openid-configuration";
+
+                var issuerProvider = new DiscoveryDocumentIssuerSecurityTokenProvider(
+                    discoveryEndpoint,
+                    options,
+                    loggerFactory);
+
+                var valParams = new TokenValidationParameters
+                {
+                    ValidAudience = issuerProvider.Audience,
+                    NameClaimType = options.NameClaimType,
+                    RoleClaimType = options.RoleClaimType
+                };
+
+                tokenFormat = new JwtFormat(valParams, issuerProvider);
+            }
+            
 
             var bearerOptions = new OAuthBearerAuthenticationOptions
             {

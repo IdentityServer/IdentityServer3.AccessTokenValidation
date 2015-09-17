@@ -40,7 +40,7 @@ namespace IdentityServer3.AccessTokenValidation
 
         public DiscoveryDocumentIssuerSecurityTokenProvider(string discoveryEndpoint, IdentityServerBearerTokenAuthenticationOptions options, ILoggerFactory loggerFactory)
         {
-            _logger = loggerFactory.Create("IdentityServer3.AccessTokenValidation.DiscoveryDocumentIssuerSecurityTokenProvider");
+            _logger = loggerFactory.Create(this.GetType().FullName);
 
             var handler = options.BackchannelHttpHandler ?? new WebRequestHandler();
 

@@ -15,7 +15,6 @@
  */
 
 using Microsoft.Owin.Security.OAuth;
-using System;
 using System.Threading.Tasks;
 
 namespace IdentityServer3.AccessTokenValidation

@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
 
 namespace IdentityServer3.AccessTokenValidation
 {
@@ -49,6 +50,22 @@ namespace IdentityServer3.AccessTokenValidation
         /// The authority.
         /// </value>
         public string Authority { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of the issuer (if you don't want to use the discovery document).
+        /// </summary>
+        /// <value>
+        /// The name of the issuer.
+        /// </value>
+        public string IssuerName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the signing certificate (if you don't want to use the discovery document).
+        /// </summary>
+        /// <value>
+        /// The signing certificate.
+        /// </value>
+        public X509Certificate2 SigningCertificate { get; set; }
 
         /// <summary>
         /// Gets or sets the validation mode.

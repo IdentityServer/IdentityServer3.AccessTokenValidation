@@ -36,7 +36,12 @@ namespace IdentityServer3.AccessTokenValidation
 
         public ValidationEndpointTokenProvider(IdentityServerBearerTokenAuthenticationOptions options, ILoggerFactory loggerFactory)
         {
-            _logger = loggerFactory.Create("ValidationEndpointTokenProvider");
+            _logger = loggerFactory.Create(this.GetType().FullName);
+
+            if (string.IsNullOrWhiteSpace(options.Authority))
+            {
+                throw new Exception("Authority must be set to use validation endpoint.");
+            }
 
             var baseAddress = options.Authority.EnsureTrailingSlash();
             baseAddress += "connect/accesstokenvalidation";
