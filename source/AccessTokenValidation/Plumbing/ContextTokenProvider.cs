@@ -24,6 +24,17 @@ namespace IdentityServer3.AccessTokenValidation
     /// </summary>
     public class ContextTokenProvider : IOAuthBearerAuthenticationProvider
     {
+        private readonly IOAuthBearerAuthenticationProvider _inner;
+
+        /// <summary>
+        /// Creates a context token provider that wraps a user provided token provider.
+        /// </summary>
+        /// <param name="inner">The inner token provider</param>
+        public ContextTokenProvider(IOAuthBearerAuthenticationProvider inner = null)
+        {
+            _inner = inner;
+        }
+
         /// <summary>
         /// Invoked before the <see cref="T:System.Security.Claims.ClaimsIdentity" /> is created. Gives the application an
         /// opportunity to find the identity from a different location, adjust, or reject the token.
@@ -49,6 +60,11 @@ namespace IdentityServer3.AccessTokenValidation
         /// <exception cref="System.NotImplementedException"></exception>
         public Task ApplyChallenge(OAuthChallengeContext context)
         {
+            if (_inner != null)
+            {
+                return _inner.ApplyChallenge(context);
+            }
+
             return Task.FromResult(0);
         }
 
@@ -62,6 +78,11 @@ namespace IdentityServer3.AccessTokenValidation
         /// </returns>
         public Task ValidateIdentity(OAuthValidateIdentityContext context)
         {
+            if (_inner != null)
+            {
+                return _inner.ValidateIdentity(context);
+            }
+
             return Task.FromResult(0);
         }
     }
