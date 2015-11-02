@@ -111,12 +111,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="InMemoryClaimsCacheTests.cs" />
+    <Compile Include="Integration Tests\Introspection.cs" />
     <Compile Include="Integration Tests\DynamicBoth.cs" />
     <Compile Include="Integration Tests\StaticBoth.cs" />
     <Compile Include="Integration Tests\StaticLocal.cs" />
     <Compile Include="Integration Tests\TokenProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\DiscoveryEndpointHandler.cs" />
+    <Compile Include="Util\IntrospectionEndpointHandler.cs" />
     <Compile Include="Util\SuccessValidationEndointHandler.cs" />
     <Compile Include="Util\FailureValidationEndointHandler.cs" />
     <Compile Include="Util\PipelineFactory.cs" />

@@ -100,6 +100,11 @@ namespace IdentityServer3.AccessTokenValidation
                     _logger.WriteError("Error returned from introspection endpoint: " + response.Error);
                     return;
                 }
+                if (!response.IsActive)
+                {
+                    _logger.WriteVerbose("Inactive token: " + context.Token);
+                    return;
+                }
             }
             catch (Exception ex)
             {
@@ -110,7 +115,10 @@ namespace IdentityServer3.AccessTokenValidation
             var claims = new List<Claim>();
             foreach (var claim in response.Claims)
             {
-                claims.Add(new Claim(claim.Item1, claim.Item2));
+                if (!string.Equals(claim.Item1, "active", StringComparison.Ordinal))
+                {
+                    claims.Add(new Claim(claim.Item1, claim.Item2));
+                }
             }
             
             if (_options.EnableValidationResultCache)
