@@ -154,5 +154,29 @@ namespace IdentityServer3.AccessTokenValidation
         ///   <c>true</c> if access token is preserved; otherwise, <c>false</c>.
         /// </value>
         public bool PreserveAccessToken { get; set; }
+
+        /// <summary>
+        /// Gets or sets the client id for accessing the introspection endpoint.
+        /// </summary>
+        /// <value>
+        /// The client id.
+        /// </value>
+        public string ClientId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the client secret for accessing the introspection endpoint.
+        /// </summary>
+        /// <value>
+        /// The client secret.
+        /// </value>
+        public string ClientSecret { get; set; }
+
+        /// <summary>
+        /// Gets or sets the HTTP handler for accessing the introspection endoint.
+        /// </summary>
+        /// <value>
+        /// The introspection HTTP handler.
+        /// </value>
+        public WebRequestHandler IntrospectionHttpHandler { get; set; }
     }
 }

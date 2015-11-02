@@ -93,9 +93,17 @@ namespace Owin
             {
                 AuthenticationMode = options.AuthenticationMode,
                 AuthenticationType = options.AuthenticationType,
-                AccessTokenProvider = new ValidationEndpointTokenProvider(options, loggerFactory),
                 Provider = new ContextTokenProvider(options.TokenProvider),
             };
+
+            if (!string.IsNullOrEmpty(options.ClientId) || options.IntrospectionHttpHandler != null)
+            {
+                bearerOptions.AccessTokenProvider = new IntrospectionEndpointTokenProvider(options, loggerFactory);
+            }
+            else
+            {
+                bearerOptions.AccessTokenProvider = new ValidationEndpointTokenProvider(options, loggerFactory);
+            }
 
             return bearerOptions;
         }
