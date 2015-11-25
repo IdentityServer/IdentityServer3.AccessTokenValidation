@@ -42,9 +42,10 @@ namespace IdentityServer3.AccessTokenValidation
         /// Initializes a new instance of the <see cref="IdentityServerBearerTokenValidationMiddleware" /> class.
         /// </summary>
         /// <param name="next">The next middleware.</param>
+        /// <param name="app">The app builder.</param>
         /// <param name="options">The options.</param>
         /// <param name="loggerFactory">The logger factory.</param>
-        public IdentityServerBearerTokenValidationMiddleware(AppFunc next, IdentityServerOAuthBearerAuthenticationOptions options, ILoggerFactory loggerFactory)
+        public IdentityServerBearerTokenValidationMiddleware(AppFunc next, IAppBuilder app, IdentityServerOAuthBearerAuthenticationOptions options, ILoggerFactory loggerFactory)
         {
             _next = next;
             _options = options;
@@ -52,7 +53,7 @@ namespace IdentityServer3.AccessTokenValidation
 
             if (options.LocalValidationOptions != null)
             {
-                var localBuilder = new AppBuilder();
+                var localBuilder = app.New();
                 localBuilder.UseOAuthBearerAuthentication(options.LocalValidationOptions);
                 localBuilder.Run(ctx => next(ctx.Environment));
                 _localValidationFunc = localBuilder.Build();
@@ -60,7 +61,7 @@ namespace IdentityServer3.AccessTokenValidation
 
             if (options.EndpointValidationOptions != null)
             {
-                var endpointBuilder = new AppBuilder();
+                var endpointBuilder = app.New();
                 endpointBuilder.Properties["host.AppName"] = "foobar";
 
                 endpointBuilder.UseOAuthBearerAuthentication(options.EndpointValidationOptions);
