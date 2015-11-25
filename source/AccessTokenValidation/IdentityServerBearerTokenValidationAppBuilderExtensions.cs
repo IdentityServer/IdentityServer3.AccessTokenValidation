@@ -64,7 +64,7 @@ namespace Owin
                 middlewareOptions.TokenProvider = options.TokenProvider;
             }
 
-            app.Use<IdentityServerBearerTokenValidationMiddleware>(middlewareOptions, loggerFactory);
+            app.Use<IdentityServerBearerTokenValidationMiddleware>(app, middlewareOptions, loggerFactory);
 
             if (options.RequiredScopes.Any())
             {
