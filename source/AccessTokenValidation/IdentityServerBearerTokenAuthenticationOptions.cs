@@ -157,6 +157,7 @@ namespace IdentityServer3.AccessTokenValidation
 
         /// <summary>
         /// Gets or sets the client id for accessing the introspection endpoint.
+        /// In IdentityServer that would be the name of an authorized scope
         /// </summary>
         /// <value>
         /// The client id.
@@ -165,6 +166,7 @@ namespace IdentityServer3.AccessTokenValidation
 
         /// <summary>
         /// Gets or sets the client secret for accessing the introspection endpoint.
+        /// In IdentityServer that is the secret associated with the authorized scope.
         /// </summary>
         /// <value>
         /// The client secret.
