@@ -59,6 +59,21 @@ namespace Owin
                     throw new Exception("ValidationMode has invalid value");
             }
 
+            if (!options.DelayLoadMetadata)
+            {
+                // evaluate the lazy members so that they can do their job
+
+                if (middlewareOptions.LocalValidationOptions != null)
+                {
+                    var ignore = middlewareOptions.LocalValidationOptions.Value;
+                }
+
+                if (middlewareOptions.EndpointValidationOptions != null)
+                {
+                    var ignore = middlewareOptions.EndpointValidationOptions.Value;
+                }
+            }
+
             if (options.TokenProvider != null)
             {
                 middlewareOptions.TokenProvider = options.TokenProvider;
@@ -79,94 +94,102 @@ namespace Owin
             return app;
         }
 
-        private static OAuthBearerAuthenticationOptions ConfigureEndpointValidation(IdentityServerBearerTokenAuthenticationOptions options, ILoggerFactory loggerFactory)
+        private static Lazy<OAuthBearerAuthenticationOptions> ConfigureEndpointValidation(IdentityServerBearerTokenAuthenticationOptions options, ILoggerFactory loggerFactory)
         {
-            if (options.EnableValidationResultCache)
+            return new Lazy<OAuthBearerAuthenticationOptions>(() => 
             {
-                if (options.ValidationResultCache == null)
+                if (options.EnableValidationResultCache)
                 {
-                    options.ValidationResultCache = new InMemoryValidationResultCache(options);
+                    if (options.ValidationResultCache == null)
+                    {
+                        options.ValidationResultCache = new InMemoryValidationResultCache(options);
+                    }
                 }
-            }
 
-            var bearerOptions = new OAuthBearerAuthenticationOptions
-            {
-                AuthenticationMode = options.AuthenticationMode,
-                AuthenticationType = options.AuthenticationType,
-                Provider = new ContextTokenProvider(options.TokenProvider),
-            };
+                var bearerOptions = new OAuthBearerAuthenticationOptions
+                {
+                    AuthenticationMode = options.AuthenticationMode,
+                    AuthenticationType = options.AuthenticationType,
+                    Provider = new ContextTokenProvider(options.TokenProvider),
+                };
 
-            if (!string.IsNullOrEmpty(options.ClientId) || options.IntrospectionHttpHandler != null)
-            {
-                bearerOptions.AccessTokenProvider = new IntrospectionEndpointTokenProvider(options, loggerFactory);
-            }
-            else
-            {
-                bearerOptions.AccessTokenProvider = new ValidationEndpointTokenProvider(options, loggerFactory);
-            }
+                if (!string.IsNullOrEmpty(options.ClientId) || options.IntrospectionHttpHandler != null)
+                {
+                    bearerOptions.AccessTokenProvider = new IntrospectionEndpointTokenProvider(options, loggerFactory);
+                }
+                else
+                {
+                    bearerOptions.AccessTokenProvider = new ValidationEndpointTokenProvider(options, loggerFactory);
+                }
 
-            return bearerOptions;
+                return bearerOptions;
+
+            }, true);
         }
 
-        internal static OAuthBearerAuthenticationOptions ConfigureLocalValidation(IdentityServerBearerTokenAuthenticationOptions options, ILoggerFactory loggerFactory)
+        internal static Lazy<OAuthBearerAuthenticationOptions> ConfigureLocalValidation(IdentityServerBearerTokenAuthenticationOptions options, ILoggerFactory loggerFactory)
         {
-            JwtFormat tokenFormat = null;
-
-            // use static configuration
-            if (!string.IsNullOrWhiteSpace(options.IssuerName) &&
-                options.SigningCertificate != null)
+            return new Lazy<OAuthBearerAuthenticationOptions>(() => 
             {
-                var audience = options.IssuerName.EnsureTrailingSlash();
-                audience += "resources";
+                JwtFormat tokenFormat = null;
 
-                var valParams = new TokenValidationParameters
-                { 
-                    ValidIssuer = options.IssuerName,
-                    ValidAudience = audience,
-                    IssuerSigningToken = new X509SecurityToken(options.SigningCertificate),
-
-                    NameClaimType = options.NameClaimType,
-                    RoleClaimType = options.RoleClaimType,
-                };
-
-                tokenFormat = new JwtFormat(valParams);
-            }
-            else
-            {
-                // use discovery endpoint
-                if (string.IsNullOrWhiteSpace(options.Authority))
+                // use static configuration
+                if (!string.IsNullOrWhiteSpace(options.IssuerName) &&
+                    options.SigningCertificate != null)
                 {
-                    throw new Exception("Either set IssuerName and SigningCertificate - or Authority");
+                    var audience = options.IssuerName.EnsureTrailingSlash();
+                    audience += "resources";
+
+                    var valParams = new TokenValidationParameters
+                    {
+                        ValidIssuer = options.IssuerName,
+                        ValidAudience = audience,
+                        IssuerSigningToken = new X509SecurityToken(options.SigningCertificate),
+
+                        NameClaimType = options.NameClaimType,
+                        RoleClaimType = options.RoleClaimType,
+                    };
+
+                    tokenFormat = new JwtFormat(valParams);
+                }
+                else
+                {
+                    // use discovery endpoint
+                    if (string.IsNullOrWhiteSpace(options.Authority))
+                    {
+                        throw new Exception("Either set IssuerName and SigningCertificate - or Authority");
+                    }
+
+                    var discoveryEndpoint = options.Authority.EnsureTrailingSlash();
+                    discoveryEndpoint += ".well-known/openid-configuration";
+
+                    var issuerProvider = new DiscoveryDocumentIssuerSecurityTokenProvider(
+                        discoveryEndpoint,
+                        options,
+                        loggerFactory);
+
+                    var valParams = new TokenValidationParameters
+                    {
+                        ValidAudience = issuerProvider.Audience,
+                        NameClaimType = options.NameClaimType,
+                        RoleClaimType = options.RoleClaimType
+                    };
+
+                    tokenFormat = new JwtFormat(valParams, issuerProvider);
                 }
 
-                var discoveryEndpoint = options.Authority.EnsureTrailingSlash();
-                discoveryEndpoint += ".well-known/openid-configuration";
 
-                var issuerProvider = new DiscoveryDocumentIssuerSecurityTokenProvider(
-                    discoveryEndpoint,
-                    options,
-                    loggerFactory);
-
-                var valParams = new TokenValidationParameters
+                var bearerOptions = new OAuthBearerAuthenticationOptions
                 {
-                    ValidAudience = issuerProvider.Audience,
-                    NameClaimType = options.NameClaimType,
-                    RoleClaimType = options.RoleClaimType
+                    AccessTokenFormat = tokenFormat,
+                    AuthenticationMode = options.AuthenticationMode,
+                    AuthenticationType = options.AuthenticationType,
+                    Provider = new ContextTokenProvider(options.TokenProvider)
                 };
 
-                tokenFormat = new JwtFormat(valParams, issuerProvider);
-            }
-            
+                return bearerOptions;
 
-            var bearerOptions = new OAuthBearerAuthenticationOptions
-            {
-                AccessTokenFormat = tokenFormat,
-                AuthenticationMode = options.AuthenticationMode,
-                AuthenticationType = options.AuthenticationType,
-                Provider = new ContextTokenProvider(options.TokenProvider)
-            };
-
-            return bearerOptions;
+            }, true);
         }
     }
 }

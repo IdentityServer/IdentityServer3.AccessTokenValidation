@@ -15,6 +15,7 @@
  */
 
 using Microsoft.Owin.Security.OAuth;
+using System;
 
 namespace IdentityServer3.AccessTokenValidation
 {
@@ -37,7 +38,7 @@ namespace IdentityServer3.AccessTokenValidation
         /// <value>
         /// The local validation options.
         /// </value>
-        public OAuthBearerAuthenticationOptions LocalValidationOptions { get; set; }
+        public Lazy<OAuthBearerAuthenticationOptions> LocalValidationOptions { get; set; }
 
         /// <summary>
         /// Gets or sets the endpoint validation options.
@@ -45,6 +46,6 @@ namespace IdentityServer3.AccessTokenValidation
         /// <value>
         /// The endpoint validation options.
         /// </value>
-        public OAuthBearerAuthenticationOptions EndpointValidationOptions { get; set; }
+        public Lazy<OAuthBearerAuthenticationOptions> EndpointValidationOptions { get; set; }
     }
 }

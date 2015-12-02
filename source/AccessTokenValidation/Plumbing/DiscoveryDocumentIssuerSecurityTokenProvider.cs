@@ -56,7 +56,11 @@ namespace IdentityServer3.AccessTokenValidation
             }
 
             _configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(discoveryEndpoint, new HttpClient(handler));
-            RetrieveMetadata();
+
+            if (!options.DelayLoadMetadata)
+            {
+                RetrieveMetadata();
+            }
         }
 
         /// <summary>

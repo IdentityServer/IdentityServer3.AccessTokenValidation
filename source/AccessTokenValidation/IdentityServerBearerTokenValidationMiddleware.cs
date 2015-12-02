@@ -33,8 +33,8 @@ namespace IdentityServer3.AccessTokenValidation
     public class IdentityServerBearerTokenValidationMiddleware
     {
         private readonly AppFunc _next;
-        private readonly AppFunc _localValidationFunc;
-        private readonly AppFunc _endpointValidationFunc;
+        private readonly Lazy<AppFunc> _localValidationFunc;
+        private readonly Lazy<AppFunc> _endpointValidationFunc;
         private readonly IdentityServerOAuthBearerAuthenticationOptions _options;
         private readonly ILogger _logger;
 
@@ -53,20 +53,28 @@ namespace IdentityServer3.AccessTokenValidation
 
             if (options.LocalValidationOptions != null)
             {
-                var localBuilder = app.New();
-                localBuilder.UseOAuthBearerAuthentication(options.LocalValidationOptions);
-                localBuilder.Run(ctx => next(ctx.Environment));
-                _localValidationFunc = localBuilder.Build();
+                _localValidationFunc = new Lazy<AppFunc>(() => 
+                {
+                    var localBuilder = app.New();
+                    localBuilder.UseOAuthBearerAuthentication(options.LocalValidationOptions.Value);
+                    localBuilder.Run(ctx => next(ctx.Environment));
+                    return localBuilder.Build();
+
+                }, true);
             }
 
             if (options.EndpointValidationOptions != null)
             {
-                var endpointBuilder = app.New();
-                endpointBuilder.Properties["host.AppName"] = "foobar";
+                _endpointValidationFunc = new Lazy<AppFunc>(() => 
+                {
+                    var endpointBuilder = app.New();
+                    endpointBuilder.Properties["host.AppName"] = "foobar";
 
-                endpointBuilder.UseOAuthBearerAuthentication(options.EndpointValidationOptions);
-                endpointBuilder.Run(ctx => next(ctx.Environment));
-                _endpointValidationFunc = endpointBuilder.Build();
+                    endpointBuilder.UseOAuthBearerAuthentication(options.EndpointValidationOptions.Value);
+                    endpointBuilder.Run(ctx => next(ctx.Environment));
+                    return endpointBuilder.Build();
+
+                }, true);
             }
         }
 
@@ -95,13 +103,13 @@ namespace IdentityServer3.AccessTokenValidation
                 // see if local validation is setup
                 if (_localValidationFunc != null)
                 {
-                    await _localValidationFunc(environment);
+                    await _localValidationFunc.Value(environment);
                     return;
                 }
                 // otherwise use validation endpoint
                 if (_endpointValidationFunc != null)
                 {
-                    await _endpointValidationFunc(environment);
+                    await _endpointValidationFunc.Value(environment);
                     return;
                 }
 
@@ -112,7 +120,7 @@ namespace IdentityServer3.AccessTokenValidation
                 // use validation endpoint
                 if (_endpointValidationFunc != null)
                 {
-                    await _endpointValidationFunc(environment);
+                    await _endpointValidationFunc.Value(environment);
                     return;
                 }
 
