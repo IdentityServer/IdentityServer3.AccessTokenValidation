@@ -18,6 +18,7 @@ using Microsoft.Owin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AppFunc = System.Func<System.Collections.Generic.IDictionary<string, object>, System.Threading.Tasks.Task>;
 
@@ -29,17 +30,17 @@ namespace IdentityServer3.AccessTokenValidation
     public class ScopeRequirementMiddleware
     {
         private readonly AppFunc _next;
-        private readonly IEnumerable<string> _scopes;
-
+        private readonly ScopeRequirementOptions _options;
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="ScopeRequirementMiddleware"/> class.
         /// </summary>
         /// <param name="next">The next midleware.</param>
-        /// <param name="scopes">The scopes.</param>
-        public ScopeRequirementMiddleware(AppFunc next, IEnumerable<string> scopes)
+        /// <param name="options">The options.</param>
+        public ScopeRequirementMiddleware(AppFunc next, ScopeRequirementOptions options)
         {
             _next = next;
-            _scopes = scopes;
+            _options = options;
         }
 
         /// <summary>
@@ -52,7 +53,21 @@ namespace IdentityServer3.AccessTokenValidation
             var context = new OwinContext(env);
 
             // if no token was sent - no need to validate scopes
-            var principal = context.Authentication.User;
+            ClaimsPrincipal principal = null;
+
+            if (!string.IsNullOrWhiteSpace(_options.AuthenticationType))
+            {
+                var result = await context.Authentication.AuthenticateAsync(_options.AuthenticationType);
+                if (result != null && result.Identity != null)
+                {
+                    principal = new ClaimsPrincipal(result.Identity);
+                }
+            }
+            else
+            {
+                principal = context.Authentication.User;
+            }
+
             if (principal == null || principal.Identity == null || !principal.Identity.IsAuthenticated)
             {
                 await _next(env);
@@ -104,7 +119,7 @@ namespace IdentityServer3.AccessTokenValidation
 
             foreach (var scope in scopeClaims)
             {
-                if (_scopes.Contains(scope.Value, StringComparer.Ordinal))
+                if (_options.RequiredScopes.Contains(scope.Value, StringComparer.Ordinal))
                 {
                     return true;
                 }
