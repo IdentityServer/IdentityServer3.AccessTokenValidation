@@ -68,7 +68,13 @@ namespace Owin
 
             if (options.RequiredScopes.Any())
             {
-                app.Use<ScopeRequirementMiddleware>(options.RequiredScopes);
+                var scopeOptions = new ScopeRequirementOptions
+                {
+                    AuthenticationType = options.AuthenticationType,
+                    RequiredScopes = options.RequiredScopes
+                };
+
+                app.Use<ScopeRequirementMiddleware>(scopeOptions);
             }
 
             if (options.PreserveAccessToken)

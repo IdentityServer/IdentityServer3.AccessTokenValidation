@@ -106,6 +106,7 @@
     <Compile Include="Plumbing\PreserveAccessTokenMiddleware.cs" />
     <Compile Include="Plumbing\ScopeRequirementMiddleware.cs" />
     <Compile Include="Plumbing\ValidationMode.cs" />
+    <Compile Include="Plumbing\ScopeRequirementOptions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\default.licenseheader">
