@@ -66,7 +66,7 @@ namespace IdentityServer3.AccessTokenValidation
                 _client = new IntrospectionClient(
                     introspectionEndpoint, 
                     options.ClientId, 
-                    options.ClientSecret ?? "", 
+                    options.ClientSecret,
                     handler);
             }
             else
