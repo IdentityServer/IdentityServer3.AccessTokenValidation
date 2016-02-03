@@ -5,7 +5,7 @@ Param(
 
 gci .\source -Recurse "packages.config" |% {
     "Restoring " + $_.FullName
-    .\source\.nuget\nuget.exe i $_.FullName -o .\source\packages
+    .\source\.nuget\nuget.exe install $_.FullName -o .\source\packages
 }
 
 Import-Module .\source\packages\psake.4.4.1\tools\psake.psm1
