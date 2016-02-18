@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+using IdentityModel.Extensions;
 using Microsoft.Owin.Logging;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Infrastructure;
@@ -67,9 +68,13 @@ namespace IdentityServer3.AccessTokenValidation
 
         public override async Task ReceiveAsync(AuthenticationTokenReceiveContext context)
         {
+            string tokenHash = null;
+
             if (_options.EnableValidationResultCache)
             {
-                var cachedClaims = await _options.ValidationResultCache.GetAsync(context.Token);
+                tokenHash = context.Token.ToSha256();
+
+                var cachedClaims = await _options.ValidationResultCache.GetAsync(tokenHash);
                 if (cachedClaims != null)
                 {
                     SetAuthenticationTicket(context, cachedClaims);
@@ -122,7 +127,7 @@ namespace IdentityServer3.AccessTokenValidation
 
             if (_options.EnableValidationResultCache)
             {
-                await _options.ValidationResultCache.AddAsync(context.Token, claims);
+                await _options.ValidationResultCache.AddAsync(tokenHash, claims);
             }
 
             SetAuthenticationTicket(context, claims);
