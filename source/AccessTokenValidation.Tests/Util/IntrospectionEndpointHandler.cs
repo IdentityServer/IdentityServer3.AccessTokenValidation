@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace AccessTokenValidation.Tests.Util
 {
-    class IntrospectionEndpointHandler : WebRequestHandler
+    class IntrospectionEndpointHandler : HttpMessageHandler
     {
         private readonly Behavior _behavior;
 

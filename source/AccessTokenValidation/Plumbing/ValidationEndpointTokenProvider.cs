@@ -56,7 +56,7 @@ namespace IdentityServer3.AccessTokenValidation
                 var webRequestHandler = handler as WebRequestHandler;
                 if (webRequestHandler == null)
                 {
-					throw new InvalidOperationException("In the options are set BackchannelHttpHandler and BackchannelCertificateValidator. If you wish to use custom BackchannelCertificateValidator, BackchannelHttpHandler has to inherit from WebRequestHandler.");
+					throw new InvalidOperationException("The back channel handler must derive from WebRequestHandler in order to use a certificate validator");
                 }
 
                 webRequestHandler.ServerCertificateValidationCallback = options.BackchannelCertificateValidator.Validate;

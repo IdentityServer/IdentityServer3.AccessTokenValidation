@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AccessTokenValidation.Tests.Util
 {
-    class SuccessValidationEndointHandler : WebRequestHandler
+    class SuccessValidationEndointHandler : HttpMessageHandler
     {
         IEnumerable<Tuple<object, object>> _additionalClaims;
 

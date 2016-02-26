@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace AccessTokenValidation.Tests.Util
 {
-    class DiscoveryEndpointHandler : WebRequestHandler
+    class DiscoveryEndpointHandler : HttpMessageHandler
     {
         string _issuerName;
         X509Certificate2 _signingCertificate;

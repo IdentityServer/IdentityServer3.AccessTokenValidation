@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace AccessTokenValidation.Tests.Util
 {
-    class FailureValidationEndointHandler : WebRequestHandler
+    class FailureValidationEndointHandler : HttpMessageHandler
     {
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
