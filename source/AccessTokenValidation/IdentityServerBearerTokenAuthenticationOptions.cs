@@ -82,7 +82,7 @@ namespace IdentityServer3.AccessTokenValidation
         /// <value>
         /// The backchannel HTTP handler.
         /// </value>
-        public WebRequestHandler BackchannelHttpHandler { get; set; }
+		public HttpMessageHandler BackchannelHttpHandler { get; set; }
 
         /// <summary>
         /// Gets or sets the backchannel certificate validator.
@@ -180,7 +180,7 @@ namespace IdentityServer3.AccessTokenValidation
         /// <value>
         /// The introspection HTTP handler.
         /// </value>
-        public WebRequestHandler IntrospectionHttpHandler { get; set; }
+		public HttpMessageHandler IntrospectionHttpHandler { get; set; }
 
         /// <summary>
         /// Indicates whether the discovery metadata sync to be delayed during the construction of 
