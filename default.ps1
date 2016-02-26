@@ -5,13 +5,12 @@ properties {
 	$dist_directory = "$base_directory\distribution"
 	$sln_file = "$src_directory\IdentityServer3.AccessTokenValidation.sln"
 	$target_config = "Release"
-	$framework_version = "v4.5"
 	$xunit_path = "$src_directory\packages\xunit.runner.console.2.0.0\tools\xunit.console.exe"
 	$ilmerge_path = "$src_directory\packages\ILMerge.2.13.0307\ILMerge.exe"
 	$nuget_path = "$src_directory\.nuget\nuget.exe"
 	
 	$buildNumber = 0;
-	$version = "2.7.1.0"
+	$version = "2.8.0.0"
 	$preRelease = $null
 }
 
