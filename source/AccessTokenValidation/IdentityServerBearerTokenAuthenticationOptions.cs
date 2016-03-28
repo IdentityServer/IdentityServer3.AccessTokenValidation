@@ -18,6 +18,7 @@ using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OAuth;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
@@ -187,5 +188,16 @@ namespace IdentityServer3.AccessTokenValidation
         /// the pipeline. <c>false</c> by default.
         /// </summary>
         public bool DelayLoadMetadata { get; set; }
+
+        /// <summary>
+        /// Gets or sets a delegate that will be used to retreive <see cref="T:System.IdentityModel.Tokens.SecurityKey"/>(s) used for checking signatures.
+        /// 
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// Each <see cref="T:System.IdentityModel.Tokens.SecurityKey"/> will be used to check the signature. Returning multiple key can be helpful when the <see cref="T:System.IdentityModel.Tokens.SecurityToken"/> does not contain a key identifier.
+        ///             This can occur when the issuer has multiple keys available. This sometimes occurs during key rollover.
+        /// </remarks>
+        public IssuerSigningKeyResolver IssuerSigningKeyResolver { get; set; }
     }
 }
