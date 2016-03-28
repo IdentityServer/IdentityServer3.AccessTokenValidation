@@ -178,7 +178,8 @@ namespace Owin
                     {
                         ValidAudience = issuerProvider.Audience,
                         NameClaimType = options.NameClaimType,
-                        RoleClaimType = options.RoleClaimType
+                        RoleClaimType = options.RoleClaimType,
+                        IssuerSigningKeyResolver = options.IssuerSigningKeyResolver
                     };
 
                     tokenFormat = new JwtFormat(valParams, issuerProvider);
