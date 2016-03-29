@@ -149,7 +149,7 @@ namespace IdentityServer3.AccessTokenValidation
                 }
 
                 var tokens = from key in result.JsonWebKeySet.Keys
-                             select new X509SecurityToken(new X509Certificate2(Convert.FromBase64String(key.X5c.First())));
+                             select new X509SecurityToken(new X509Certificate2(Convert.FromBase64String(key.X5c.First())), key.Kid);
                 
                 _issuer = result.Issuer;
                 _tokens = tokens;
