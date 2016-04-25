@@ -27,7 +27,7 @@ namespace IdentityServer3.AccessTokenValidation
         Both,
 
         /// <summary>
-        /// Use local validation oly (only suitable for JWT tokens)
+        /// Use local validation only (only suitable for JWT tokens)
         /// </summary>
         Local,
 
