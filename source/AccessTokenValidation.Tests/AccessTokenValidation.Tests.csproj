@@ -117,6 +117,7 @@
     <Compile Include="InMemoryClaimsCacheTests.cs" />
     <Compile Include="Integration Tests\Introspection.cs" />
     <Compile Include="Integration Tests\DynamicBoth.cs" />
+    <Compile Include="Integration Tests\ResponseHeaders.cs" />
     <Compile Include="Integration Tests\StaticBoth.cs" />
     <Compile Include="Integration Tests\StaticLocal.cs" />
     <Compile Include="Integration Tests\TokenProvider.cs" />
