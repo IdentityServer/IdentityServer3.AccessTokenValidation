@@ -89,22 +89,23 @@ namespace IdentityServer3.AccessTokenValidation
         private void EmitCorsResponseHeaders(IDictionary<string, object> env)
         {
             var ctx = new OwinContext(env);
+            var responseHeaders = ctx.Response.Headers;
             string[] values;
 
             if (ctx.Request.Headers.TryGetValue("Origin", out values))
             {
-                ctx.Response.Headers.Add("Access-Control-Allow-Origin", values);
-                ctx.Response.Headers.Add("Access-Control-Expose-Headers", new string[] { "WWW-Authenticate" });
+                SetHeaderIfNotAlreadyPresent(responseHeaders, "Access-Control-Allow-Origin", values);
+                SetHeaderIfNotAlreadyPresent(responseHeaders, "Access-Control-Expose-Headers", new string[] { "WWW-Authenticate" });
             }
 
             if (ctx.Request.Headers.TryGetValue("Access-Control-Request-Method", out values))
             {
-                ctx.Response.Headers.Add("Access-Control-Allow-Method", values);
+                SetHeaderIfNotAlreadyPresent(responseHeaders, "Access-Control-Allow-Method", values);
             }
 
             if (ctx.Request.Headers.TryGetValue("Access-Control-Request-Headers", out values))
             {
-                ctx.Response.Headers.Add("Access-Control-Allow-Headers", values);
+                SetHeaderIfNotAlreadyPresent(responseHeaders, "Access-Control-Allow-Headers", values);
             }
         }
 
@@ -126,6 +127,14 @@ namespace IdentityServer3.AccessTokenValidation
             }
 
             return false;
+        }
+
+        private static void SetHeaderIfNotAlreadyPresent(IHeaderDictionary headers, string headerName, string[] headerValues)
+        {
+            if (!headers.ContainsKey(headerName))
+            {
+                headers.Add(headerName, headerValues);
+            }
         }
     }
 }

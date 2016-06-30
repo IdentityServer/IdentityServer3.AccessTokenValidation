@@ -2,6 +2,7 @@
 using Microsoft.Owin.Builder;
 using Microsoft.Owin.Logging;
 using Owin;
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -9,10 +10,12 @@ namespace AccessTokenValidation.Tests.Util
 {
     class PipelineFactory
     {
-        public static IAppBuilder Create(IdentityServerBearerTokenAuthenticationOptions options)
+        public static IAppBuilder Create(IdentityServerBearerTokenAuthenticationOptions options, Action<IAppBuilder> configure)
         {
             IAppBuilder app = new AppBuilder();
             app.SetLoggerFactory(new DiagnosticsLoggerFactory());
+
+            configure?.Invoke(app);
 
             app.UseIdentityServerBearerTokenAuthentication(options);
             
@@ -38,9 +41,9 @@ namespace AccessTokenValidation.Tests.Util
             return app;
         }
 
-        public static HttpClient CreateHttpClient(IdentityServerBearerTokenAuthenticationOptions options)
+        public static HttpClient CreateHttpClient(IdentityServerBearerTokenAuthenticationOptions options, Action<IAppBuilder> configure = null)
         {
-            var app = PipelineFactory.Create(options);
+            var app = PipelineFactory.Create(options, configure);
             var handler = new OwinHttpMessageHandler(app.Build());
             var client = new HttpClient(handler);
 
