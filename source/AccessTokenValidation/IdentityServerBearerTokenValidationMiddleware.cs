@@ -22,6 +22,7 @@ using Owin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AppFunc = System.Func<System.Collections.Generic.IDictionary<string, object>, System.Threading.Tasks.Task>;
 
@@ -60,7 +61,7 @@ namespace IdentityServer3.AccessTokenValidation
                     localBuilder.Run(ctx => next(ctx.Environment));
                     return localBuilder.Build();
 
-                }, true);
+                }, LazyThreadSafetyMode.PublicationOnly);
             }
 
             if (options.EndpointValidationOptions != null)
