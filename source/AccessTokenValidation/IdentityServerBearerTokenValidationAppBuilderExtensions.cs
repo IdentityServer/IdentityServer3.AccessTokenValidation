@@ -21,6 +21,7 @@ using Microsoft.Owin.Security.OAuth;
 using System;
 using System.IdentityModel.Tokens;
 using System.Linq;
+using System.Threading;
 
 namespace Owin
 {
@@ -196,7 +197,7 @@ namespace Owin
 
                 return bearerOptions;
 
-            }, true);
+            }, LazyThreadSafetyMode.PublicationOnly);
         }
     }
 }
