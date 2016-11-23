@@ -179,9 +179,17 @@ namespace Owin
                     {
                         ValidAudience = issuerProvider.Audience,
                         NameClaimType = options.NameClaimType,
-                        RoleClaimType = options.RoleClaimType,
-                        IssuerSigningKeyResolver = options.IssuerSigningKeyResolver
+                        RoleClaimType = options.RoleClaimType
                     };
+
+                    if (options.IssuerSigningKeyResolver != null)
+                    {
+                        valParams.IssuerSigningKeyResolver = options.IssuerSigningKeyResolver;
+                    }
+                    else
+                    {
+                        valParams.IssuerSigningKeyResolver = ResolveRsaKeys;
+                    }
 
                     tokenFormat = new JwtFormat(valParams, issuerProvider);
                 }
@@ -198,6 +206,31 @@ namespace Owin
                 return bearerOptions;
 
             }, LazyThreadSafetyMode.PublicationOnly);
+        }
+
+        private static SecurityKey ResolveRsaKeys(
+            string token, 
+            SecurityToken securityToken, 
+            SecurityKeyIdentifier keyIdentifier, 
+            TokenValidationParameters validationParameters)
+        {
+            string id = null;
+            foreach (var keyId in keyIdentifier)
+            {
+                var nk = keyId as NamedKeySecurityKeyIdentifierClause;
+                if (nk != null)
+                {
+                    id = nk.Id;
+                    break;
+                }
+            }
+
+            if (id == null) return null;
+
+            var issuerToken = validationParameters.IssuerSigningTokens.FirstOrDefault(it => it.Id == id);
+            if (issuerToken == null) return null;
+
+            return issuerToken.SecurityKeys.FirstOrDefault();
         }
     }
 }

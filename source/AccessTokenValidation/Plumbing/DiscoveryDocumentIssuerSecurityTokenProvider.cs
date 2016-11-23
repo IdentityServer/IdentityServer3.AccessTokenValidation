@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 
@@ -148,9 +149,19 @@ namespace IdentityServer3.AccessTokenValidation
                     throw new InvalidOperationException("Discovery document has no configured signing key. aborting.");
                 }
 
-                var tokens = from key in result.JsonWebKeySet.Keys
-                             select new X509SecurityToken(new X509Certificate2(Convert.FromBase64String(key.X5c.First())), key.Kid);
-                
+                var tokens = new List<SecurityToken>();
+                foreach (var key in result.JsonWebKeySet.Keys)
+                {
+                    var rsa = RSA.Create();
+                    rsa.ImportParameters(new RSAParameters
+                    {
+                        Exponent = Base64UrlEncoder.DecodeBytes(key.E),
+                        Modulus = Base64UrlEncoder.DecodeBytes(key.N)
+                    });
+
+                    tokens.Add(new RsaSecurityToken(rsa, key.Kid));
+                }
+
                 _issuer = result.Issuer;
                 _tokens = tokens;
                 _syncAfter = DateTimeOffset.UtcNow + _refreshInterval;
