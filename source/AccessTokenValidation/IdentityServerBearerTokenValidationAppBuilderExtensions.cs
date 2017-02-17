@@ -15,6 +15,7 @@
  */
 
 using IdentityServer3.AccessTokenValidation;
+using Microsoft.Owin.Extensions;
 using Microsoft.Owin.Logging;
 using Microsoft.Owin.Security.Jwt;
 using Microsoft.Owin.Security.OAuth;
@@ -97,6 +98,8 @@ namespace Owin
             {
                 app.Use<PreserveAccessTokenMiddleware>();
             }
+
+            app.UseStageMarker(PipelineStage.Authenticate);
 
             return app;
         }
