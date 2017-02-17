@@ -26,6 +26,7 @@
       <dependency id="IdentityModel" version="[1.9.2,2.0)" />
       <dependency id="Newtonsoft.Json" version="8.0.3" />
       <dependency id="Microsoft.IdentityModel.Protocol.Extensions" version="1.0.2.206221351" />
+      <dependency id="System.IdentityModel.Tokens.Jwt" version="4.0.2.206221351" />
     </dependencies>
   </metadata>
 </package>
