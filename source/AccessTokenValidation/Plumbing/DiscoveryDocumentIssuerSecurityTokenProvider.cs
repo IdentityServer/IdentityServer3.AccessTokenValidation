@@ -20,22 +20,17 @@ using Microsoft.Owin.Security.Jwt;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens;
-using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 
 namespace IdentityServer3.AccessTokenValidation
 {
     internal class DiscoveryDocumentIssuerSecurityTokenProvider : IIssuerSecurityTokenProvider
     {
-        private readonly TimeSpan _refreshInterval = new TimeSpan(1, 0, 0, 0);
         private readonly ReaderWriterLockSlim _synclock = new ReaderWriterLockSlim();
         private readonly ConfigurationManager<OpenIdConnectConfiguration> _configurationManager;
         private readonly ILogger _logger;
-
-        private DateTimeOffset _syncAfter = new DateTimeOffset(new DateTime(2001, 1, 1));
         private string _issuer;
         private IEnumerable<SecurityToken> _tokens;
 
@@ -56,7 +51,10 @@ namespace IdentityServer3.AccessTokenValidation
                 webRequestHandler.ServerCertificateValidationCallback = options.BackchannelCertificateValidator.Validate;
             }
 
-            _configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(discoveryEndpoint, new HttpClient(handler));
+            _configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(discoveryEndpoint, new HttpClient(handler))
+            {
+                AutomaticRefreshInterval = options.AutomaticRefreshInterval
+            };
 
             if (!options.DelayLoadMetadata)
             {
@@ -133,16 +131,11 @@ namespace IdentityServer3.AccessTokenValidation
 
         private void RetrieveMetadata()
         {
-            if (_syncAfter >= DateTimeOffset.UtcNow)
-            {
-                return;
-            }
-
             _synclock.EnterWriteLock();
             try
             {
                 var result = AsyncHelper.RunSync(async () => await _configurationManager.GetConfigurationAsync());
-                
+
                 if (result.JsonWebKeySet == null)
                 {
                     _logger.WriteError("Discovery document has no configured signing key. aborting.");
@@ -164,9 +157,8 @@ namespace IdentityServer3.AccessTokenValidation
 
                 _issuer = result.Issuer;
                 _tokens = tokens;
-                _syncAfter = DateTimeOffset.UtcNow + _refreshInterval;
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 _logger.WriteError("Error contacting discovery endpoint: " + ex.ToString());
                 throw;
