@@ -43,6 +43,7 @@ namespace IdentityServer3.AccessTokenValidation
             ValidationResultCacheDuration = TimeSpan.FromMinutes(5);
             PreserveAccessToken = false;
             DelayLoadMetadata = false;
+            AutomaticRefreshInterval = TimeSpan.FromDays(1);
         }
 
         /// <summary>
@@ -184,20 +185,26 @@ namespace IdentityServer3.AccessTokenValidation
 		public HttpMessageHandler IntrospectionHttpHandler { get; set; }
 
         /// <summary>
-        /// Indicates whether the discovery metadata sync to be delayed during the construction of 
+        /// Indicates whether the discovery metadata sync to be delayed during the construction of
         /// the pipeline. <c>false</c> by default.
         /// </summary>
         public bool DelayLoadMetadata { get; set; }
 
         /// <summary>
         /// Gets or sets a delegate that will be used to retreive <see cref="T:System.IdentityModel.Tokens.SecurityKey"/>(s) used for checking signatures.
-        /// 
+        ///
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// Each <see cref="T:System.IdentityModel.Tokens.SecurityKey"/> will be used to check the signature. Returning multiple key can be helpful when the <see cref="T:System.IdentityModel.Tokens.SecurityToken"/> does not contain a key identifier.
         ///             This can occur when the issuer has multiple keys available. This sometimes occurs during key rollover.
         /// </remarks>
         public IssuerSigningKeyResolver IssuerSigningKeyResolver { get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="TimeSpan"/> that controls how often an automatic metadata refresh should occur.
+        /// Default is 1 day.
+        /// </summary>
+        public TimeSpan AutomaticRefreshInterval { get; set; }
     }
 }
