@@ -43,6 +43,7 @@ namespace IdentityServer3.AccessTokenValidation
             ValidationResultCacheDuration = TimeSpan.FromMinutes(5);
             PreserveAccessToken = false;
             DelayLoadMetadata = false;
+            AutomaticRefreshInterval = TimeSpan.FromDays(1);
         }
 
         /// <summary>
@@ -204,6 +205,6 @@ namespace IdentityServer3.AccessTokenValidation
         /// Gets or sets the <see cref="TimeSpan"/> that controls how often an automatic metadata refresh should occur.
         /// Default is 1 day.
         /// </summary>
-        public TimeSpan AutomaticRefreshInterval { get; set; } = TimeSpan.FromDays(1);
+        public TimeSpan AutomaticRefreshInterval { get; set; }
     }
 }
