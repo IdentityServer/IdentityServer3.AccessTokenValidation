@@ -154,3 +154,4 @@ distribution/
 #Roslyn compiler temp folders
 *.sln.ide/
 source/IdentityServer3.AccessTokenValidation.sln.GhostDoc.xml
+source/.vs/

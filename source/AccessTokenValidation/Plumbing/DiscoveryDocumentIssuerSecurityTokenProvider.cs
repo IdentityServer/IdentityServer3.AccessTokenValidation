@@ -23,13 +23,14 @@ using System.IdentityModel.Tokens;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Threading;
+using IdentityServer3.AccessTokenValidation.Plumbing;
 
 namespace IdentityServer3.AccessTokenValidation
 {
     internal class DiscoveryDocumentIssuerSecurityTokenProvider : IIssuerSecurityTokenProvider
     {
         private readonly ReaderWriterLockSlim _synclock = new ReaderWriterLockSlim();
-        private readonly ConfigurationManager<OpenIdConnectConfiguration> _configurationManager;
+        private readonly IConfigurationManager<OpenIdConnectConfiguration> _configurationManager;
         private readonly ILogger _logger;
         private string _issuer;
         private IEnumerable<SecurityToken> _tokens;
@@ -51,10 +52,10 @@ namespace IdentityServer3.AccessTokenValidation
                 webRequestHandler.ServerCertificateValidationCallback = options.BackchannelCertificateValidator.Validate;
             }
 
-            _configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(discoveryEndpoint, new HttpClient(handler))
+            _configurationManager = new AdapterConfigurationManager(new ConfigurationManager<OpenIdConnectConfiguration>(discoveryEndpoint, new HttpClient(handler))
             {
                 AutomaticRefreshInterval = options.AutomaticRefreshInterval
-            };
+            });
 
             if (!options.DelayLoadMetadata)
             {
@@ -134,7 +135,7 @@ namespace IdentityServer3.AccessTokenValidation
             _synclock.EnterWriteLock();
             try
             {
-                var result = AsyncHelper.RunSync(async () => await _configurationManager.GetConfigurationAsync());
+                var result = AsyncHelper.RunSync(async () => await _configurationManager.GetConfigurationAsync(CancellationToken.None));
 
                 if (result.JsonWebKeySet == null)
                 {
